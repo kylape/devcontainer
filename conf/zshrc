@@ -1,0 +1,40 @@
+# Path to your oh-my-zsh installation.
+export ZSH=$HOME/.oh-my-zsh
+
+ZSH_THEME="amuse"
+
+DISABLE_AUTO_TITLE="true"
+
+plugins=(git vi-mode)
+
+source $ZSH/oh-my-zsh.sh
+
+# alias skank=". /home/klape/conf/private/enable-agent"
+alias ll="ls -l --color=auto"
+alias today='gcalcli 7am 6pm'
+# . /home/klape/conf/private/enable-agent
+# export TERM=screen-256color
+export TERMINAL=alacritty
+set -o vi
+alias k=kubectl
+alias vim=nvim
+alias bkg="feh --bg-center -B black"
+alias rhldap="python /home/klape/src/ldap/rh_ldap.py"
+export EDITOR=nvim SHELL=/bin/zsh
+setopt noautomenu
+export PATH=$HOME/bin:$HOME/conf/bin:$HOME/.local/bin:$HOME/js/node_modules/.bin:$PATH
+export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin
+export NVIM_TUI_ENABLE_TRUE_COLOR=1
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+
+export GOROOT=/go
+export GOPATH=~/go
+export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+
+export GPG_TTY=$(tty)
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

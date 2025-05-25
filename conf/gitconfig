@@ -1,0 +1,25 @@
+[user]
+	name = Kyle Lape
+	email = klape@redhat.com
+	signingkey = C616EBAE1688846D
+[push]
+	default = simple
+
+[alias]
+	edit-unmerged = "!f() { git ls-files --modified | cut -f2 | sort -u ; }; vim `f`"
+	add-unmerged = "!f() { git ls-files --modified | cut -f2 | sort -u ; }; git add `f`"
+; [commit]
+; 	gpgsign = true
+[pull]
+	ff = only
+[init]
+	defaultBranch = main
+	templateDir = /home/klape/.git-template
+[rh-pre-commit]
+	enableLocalConfig = false
+	checkSecrets = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

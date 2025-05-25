@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: devcontainer
+  name: devcontainer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devcontainer
+  template:
+    metadata:
+      labels:
+        app: devcontainer
+    spec:
+      containers:
+      - image: localhost:5001/devcontainer/devcontainer:latest
+        imagePullPolicy: Always
+        name: devcontainer
+        resources: {}
+        ports:
+        - name: ssh
+          containerPort: 22
+        volumeMounts:
+        - name: disk
+          mountPath: /data
+      volumes:
+      - name: disk
+        persistentVolumeClaim:
+          claimName: devcontainer
