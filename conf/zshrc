@@ -35,6 +35,42 @@ export GPG_TTY=$(tty)
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+local auth_sock=$(ls -d /tmp/ssh-X*/* 2>/dev/null)
+
+if [[ -n "$auth_sock" ]];then
+    export SSH_AUTH_SOCK="$auth_sock"
+fi
+
+if [[ -z "$SSH_AUTH_SOCK" ]]; then
+    eval $(ssh-agent -s)
+fi
+
+eval $(~/secrets/secrets-setup.sh)
+
+mc alias set s3 https://s3.us-east-1.amazonaws.com "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY"
+
+if [[ ! -f "$HOME/.zsh_history" ]]; then
+    mc get s3/klape-devcontainer/zsh_history ~/.zsh_history
+fi
+
+setopt SHARE_HISTORY          # Share history between sessions
+setopt APPEND_HISTORY         # Append rather than overwrite
+setopt INC_APPEND_HISTORY     # Write immediately, don't wait for exit
+setopt HIST_IGNORE_DUPS       # Don't record duplicates
+setopt HIST_IGNORE_ALL_DUPS   # Remove older duplicate entries
+setopt HIST_SAVE_NO_DUPS      # Don't save duplicates to file
+
+export HISTSIZE=10000         # Lines in memory
+export SAVEHIST=10000         # Lines saved to file
+
+mkdir -p ~/src
+
+if [[ ! -d "$HOME/zettelkasten" ]]; then
+    gh repo clone kylape/zettelkasten
+fi
+
+function cloneghrepos() {
+    for r in "stackrox/stackrox" "kylape/stackrox-tekton" "kylape/devcontainer" "kylape/pac-demo"; do
+        gh repo clone $r
+    done
+}

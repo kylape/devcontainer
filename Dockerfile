@@ -4,8 +4,10 @@ RUN curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/st
 RUN VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt) \
     curl -L https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-amd64 > /usr/bin/virtctl && \
     chmod +x /usr/bin/virtctl
-RUN dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-64bit.rpm
-RUN dnf install -y neovim sshd tmux zsh yq tig procps-ng rbw htop
+RUN dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-64bit.rpm && \
+    dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.x86_64.rpm
+RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
+RUN dnf install -y neovim sshd tmux zsh yq tig procps-ng rbw htop age man-db pinentry gh
 
 RUN groupadd -g 1000 dev && \
     useradd -m -u 1000 -g 1000 -s /bin/zsh dev && \
@@ -28,11 +30,13 @@ RUN touch /home/dev/.ssh/authorized_keys && \
     ln -s /home/dev/.config/nvim/vimrc.vim /home/dev/.vimrc && \
     nvim --headless -c 'Lazy install' -c 'quit' && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
-    GOROOT=/go GOPATH=/home/dev/go /go/bin/go install golang.org/x/tools/gopls@latest
+    GOROOT=/go GOPATH=/home/dev/go /go/bin/go install golang.org/x/tools/gopls@latest && \
+    mkdir -p /home/dev/secrets
 
-COPY conf/tmux.conf /home/dev/.tmux.conf
-COPY conf/zshrc /home/dev/.zshrc
-COPY conf/gitconfig /home/dev/.gitconfig
+COPY --chown=dev:dev conf/tmux.conf /home/dev/.tmux.conf
+COPY --chown=dev:dev conf/zshrc /home/dev/.zshrc
+COPY --chown=dev:dev conf/gitconfig /home/dev/.gitconfig
+COPY --chown=dev:dev secrets/* /home/dev/secrets
 
 USER root
 CMD ["/usr/bin/sshd", "-D"]

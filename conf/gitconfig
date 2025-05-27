@@ -4,12 +4,11 @@
 	signingkey = C616EBAE1688846D
 [push]
 	default = simple
-
 [alias]
 	edit-unmerged = "!f() { git ls-files --modified | cut -f2 | sort -u ; }; vim `f`"
 	add-unmerged = "!f() { git ls-files --modified | cut -f2 | sort -u ; }; git add `f`"
-; [commit]
-; 	gpgsign = true
+[commit]
+    gpgsign = true
 [pull]
 	ff = only
 [init]
