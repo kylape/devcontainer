@@ -46,7 +46,11 @@ fi
 
 eval $(~/secrets/secrets-setup.sh)
 
-mc alias set s3 https://s3.us-east-1.amazonaws.com "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY"
+mc alias ls s3 > /dev/null
+
+if [[ "$?" != "0" ]]; then
+    mc alias set s3 https://s3.us-east-1.amazonaws.com "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY"
+fi
 
 if [[ ! -f "$HOME/.zsh_history" ]]; then
     mc get s3/klape-devcontainer/zsh_history ~/.zsh_history

@@ -31,11 +31,13 @@ RUN touch /home/dev/.ssh/authorized_keys && \
     nvim --headless -c 'Lazy install' -c 'quit' && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     GOROOT=/go GOPATH=/home/dev/go /go/bin/go install golang.org/x/tools/gopls@latest && \
-    mkdir -p /home/dev/secrets
+    mkdir -p /home/dev/secrets && \
+    mkdir -p /home/dev/.config/gh
 
 COPY --chown=dev:dev conf/tmux.conf /home/dev/.tmux.conf
 COPY --chown=dev:dev conf/zshrc /home/dev/.zshrc
 COPY --chown=dev:dev conf/gitconfig /home/dev/.gitconfig
+COPY --chown=dev:dev conf/gh.yaml /home/dev/.config/gh/config.yml
 COPY --chown=dev:dev secrets/* /home/dev/secrets
 
 USER root
