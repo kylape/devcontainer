@@ -39,4 +39,5 @@ COPY --chown=dev:dev conf/gitconfig /home/dev/.gitconfig
 COPY --chown=dev:dev secrets/* /home/dev/secrets
 
 USER root
+EXPOSE 22
 CMD ["/usr/bin/sshd", "-D"]
