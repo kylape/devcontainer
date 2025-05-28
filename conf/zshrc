@@ -46,9 +46,10 @@ fi
 
 eval $(~/secrets/secrets-setup.sh)
 
-mc alias ls s3 > /dev/null
 
-if [[ "$?" != "0" ]]; then
+# Check if the s3 config is still has the stock placeholder settings
+if [[ -n "$(mc alias ls s3 | grep YOUR-ACCESS-KEY-HERE)" ]]; then
+    echo Setting up mc alias for s3...
     mc alias set s3 https://s3.us-east-1.amazonaws.com "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY"
 fi
 
