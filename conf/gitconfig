@@ -13,7 +13,6 @@
 	ff = only
 [init]
 	defaultBranch = main
-	templateDir = /home/klape/.git-template
 [rh-pre-commit]
 	enableLocalConfig = false
 	checkSecrets = true

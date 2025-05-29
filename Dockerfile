@@ -9,37 +9,30 @@ RUN dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tek
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 RUN dnf install -y neovim sshd tmux zsh yq tig procps-ng rbw htop age man-db pinentry gh
 
-RUN groupadd -g 1000 dev && \
-    useradd -m -u 1000 -g 1000 -s /bin/zsh dev && \
-    mkdir -p /home/dev/.ssh && \
-    chown dev:dev /home/dev/.ssh && \
-    chown -R dev:dev /home/dev && \
-    chmod 700 /home/dev/.ssh && \
+RUN mkdir -p /root/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
     ssh-keygen -A && \
     npm -g install mcp-hub@latest
 
 COPY conf/pam-sshd /etc/pam.d/sshd
 
-USER dev
-RUN touch /home/dev/.ssh/authorized_keys && \
-    curl -L https://github.com/kylape.keys >> /home/dev/.ssh/authorized_keys && \
-    mkdir -p ~/.config && \
-    git -C ~/.config clone https://github.com/kylape/neovim-config.git nvim && \
-    ln -s /home/dev/.config/nvim/vimrc.vim /home/dev/.vimrc && \
-    nvim --headless -c 'Lazy install' -c 'quit' && \
+RUN touch /root/.ssh/authorized_keys && \
+    curl -L https://github.com/kylape.keys >> /root/.ssh/authorized_keys && \
+    mkdir -p /root/.config && \
+    git -C /root/.config clone https://github.com/kylape/neovim-config.git nvim && \
+    ln -s /root/.config/nvim/vimrc.vim /root/.vimrc && \
+    nvim --headless -c 'Lazy install' -c 'Lazy update' -c 'quit' && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
-    GOROOT=/go GOPATH=/home/dev/go /go/bin/go install golang.org/x/tools/gopls@latest && \
-    mkdir -p /home/dev/secrets && \
-    mkdir -p /home/dev/.config/gh
+    GOROOT=/go GOPATH=/root/go /go/bin/go install golang.org/x/tools/gopls@latest && \
+    mkdir -p /root/secrets && \
+    mkdir -p /root/.config/gh && mkdir -p /root/.config/ripgrep
 
-COPY --chown=dev:dev conf/tmux.conf /home/dev/.tmux.conf
-COPY --chown=dev:dev conf/zshrc /home/dev/.zshrc
-COPY --chown=dev:dev conf/gitconfig /home/dev/.gitconfig
-COPY --chown=dev:dev conf/gh.yaml /home/dev/.config/gh/config.yml
-COPY --chown=dev:dev secrets/* /home/dev/secrets
+COPY conf/tmux.conf /root/.tmux.conf
+COPY conf/zshrc /root/.zshrc
+COPY conf/gitconfig /root/.gitconfig
+COPY conf/gh.yaml /root/.config/gh/config.yml
+COPY conf/ripgrep /root/.config/ripgrep/config
+COPY secrets/* /root/secrets
 
-USER root
 EXPOSE 22
 CMD ["/usr/bin/sshd", "-D"]

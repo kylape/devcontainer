@@ -68,6 +68,7 @@ export HISTSIZE=10000         # Lines in memory
 export SAVEHIST=10000         # Lines saved to file
 
 mkdir -p ~/src
+cd
 
 if [[ ! -d "$HOME/zettelkasten" ]]; then
     gh repo clone kylape/zettelkasten
