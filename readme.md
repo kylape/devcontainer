@@ -18,7 +18,7 @@ These are the requirements I care about right now:
 
 Given the above requirements, here's what this project looks like:
 
-* Container image based off of Stackrox builder image
+* Container image based off of [Stackrox builder image](https://github.com/kylape/stackrox-tekton/blob/main/Dockerfile)
 * SSH running in-container.  `kubectl exec` does not work easily on tablets.
 * S3/MinIO as a cache
 * SOPS/age for managing secrets
@@ -30,9 +30,9 @@ Similar to requirements, this is why I think a devcontainer would be a nice way 
 
 * Portability: I can have a consistent environment across any device
 * Auditability: I have a clear log of any package or config added to the container image
-* More shareable: I can easily share my devcontainers code repo to other devs to show what my development environment is like
+* More shareable: I can easily share my devcontainers code repo to other devs to show what my development environment is like.  I can also add a dev's public SSH key and let them log in to my environment.
 * Cloud network: Remote Kubernetes clusters are typically in data centers that are closer to other network resources like Go packages or caching layers
-* Local nework: Ability to directly contact other kube resources
+* Local nework: Ability to directly contact other kube resources without port forwards
 
 ## Security
 
@@ -47,5 +47,3 @@ Of course the obvious downsides are:
 
 * Sensitive data are in the cloud as opposed to on a physical machine in close proximity to the user
 * While inentionality is great, overlooked security gaps have a greater impact on devcontainers than local development
-
-
