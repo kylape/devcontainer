@@ -177,14 +177,12 @@ check_agents() {
     # - 2: agent not running
     if [[ -n "${SSH_AUTH_SOCK:-}" && -n "$(ssh-add -l | grep SHA256)" ]]; then
         ssh_loaded=true
-        log "SSH keys already loaded in agent"
     fi
     
     # Check if GPG has secret keys
     # gpg --list-secret-keys returns non-zero if no secret keys exist
     if [[ -n "$(gpg --list-keys 2>/dev/null)" ]]; then
         gpg_loaded=true
-        log "GPG keys already available in keyring"
     fi
     
     # Return 0 (success) if both agents have keys loaded

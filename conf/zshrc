@@ -32,7 +32,7 @@ export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
 export GPG_TTY=$(tty)
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source /usr/share/fzf/shell/key-bindings.zsh
 
 local auth_sock=$(ls -d /tmp/ssh-X*/* 2>/dev/null)
 
@@ -63,6 +63,7 @@ setopt INC_APPEND_HISTORY     # Write immediately, don't wait for exit
 setopt HIST_IGNORE_DUPS       # Don't record duplicates
 setopt HIST_IGNORE_ALL_DUPS   # Remove older duplicate entries
 setopt HIST_SAVE_NO_DUPS      # Don't save duplicates to file
+setopt PROMPT_SUBST
 
 export HISTSIZE=10000         # Lines in memory
 export SAVEHIST=10000         # Lines saved to file
@@ -79,3 +80,11 @@ function cloneghrepos() {
         gh repo clone $r
     done
 }
+
+git_dirty() {
+    if [[ -n "$(git -C ~/zettelkasten status --porcelain)" ]]; then
+        echo "-- UNCOMMITTED ZETTELKASTEN --"
+    fi
+}
+
+PROMPT='✨ devcontainer ✨ $(git_dirty)'" $PROMPT"
