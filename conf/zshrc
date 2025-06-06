@@ -83,7 +83,7 @@ function cloneghrepos() {
 
 git_dirty() {
     for repo in $(find ~/src -maxdepth 1 -type d); do
-        if [[ "$repo" != "/root/src" && -n "$(git -C "$repo" status --porcelain)" ]]; then
+        if [[ "$repo" != "/root/src" && "$repo" != "/root/src/lost+found" && -n "$(git -C "$repo" status --porcelain)" ]]; then
             echo -en "\n💾 $repo"
         fi
     done
