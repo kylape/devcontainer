@@ -14,6 +14,7 @@ spec:
       labels:
         app: devcontainer
     spec:
+      serviceAccountName: admin
       containers:
       - image: ghcr.io/kylape/devcontainer:main
         imagePullPolicy: Always
