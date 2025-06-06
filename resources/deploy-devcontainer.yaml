@@ -15,7 +15,7 @@ spec:
         app: devcontainer
     spec:
       containers:
-      - image: localhost:5001/devcontainer/devcontainer:latest
+      - image: ghcr.io/kylape/devcontainer:main
         imagePullPolicy: Always
         name: devcontainer
         resources: {}
@@ -23,9 +23,9 @@ spec:
         - name: ssh
           containerPort: 22
         volumeMounts:
-        - name: disk
-          mountPath: /data
+        - name: src
+          mountPath: /root/src
       volumes:
-      - name: disk
+      - name: src
         persistentVolumeClaim:
           claimName: devcontainer

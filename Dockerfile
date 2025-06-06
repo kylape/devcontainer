@@ -12,7 +12,8 @@ RUN dnf install -y neovim sshd tmux zsh yq tig procps-ng rbw htop age man-db pin
 RUN mkdir -p /root/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
     ssh-keygen -A && \
-    npm -g install mcp-hub@latest
+    npm -g install mcp-hub@latest && \
+    npm -g install yaml-language-server
 
 COPY conf/pam-sshd /etc/pam.d/sshd
 

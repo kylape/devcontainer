@@ -71,20 +71,22 @@ export SAVEHIST=10000         # Lines saved to file
 mkdir -p ~/src
 cd
 
-if [[ ! -d "$HOME/zettelkasten" ]]; then
-    gh repo clone kylape/zettelkasten
+if [[ ! -d "$HOME/src/zettelkasten" ]]; then
+    gh repo clone kylape/zettelkasten src/zettelkasten
 fi
 
 function cloneghrepos() {
-    for r in "stackrox/stackrox" "kylape/stackrox-tekton" "kylape/devcontainer" "kylape/pac-demo"; do
+    for r in "stackrox/stackrox" "kylape/neovim-config" "kylape/stackrox-tekton" "kylape/devcontainer" "kylape/pac-demo"; do
         gh repo clone $r
     done
 }
 
 git_dirty() {
-    if [[ -n "$(git -C ~/zettelkasten status --porcelain)" ]]; then
-        echo "-- UNCOMMITTED ZETTELKASTEN --"
-    fi
+    for repo in $(find ~/src -maxdepth 1 -type d); do
+        if [[ "$repo" != "/root/src" && -n "$(git -C "$repo" status --porcelain)" ]]; then
+            echo -en "\n💾 $repo"
+        fi
+    done
 }
 
 PROMPT='✨ devcontainer ✨ $(git_dirty)'" $PROMPT"
