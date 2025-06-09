@@ -22,7 +22,7 @@ RUN touch /root/.ssh/authorized_keys && \
     mkdir -p /root/.config && \
     git -C /root/.config clone https://github.com/kylape/neovim-config.git nvim && \
     ln -s /root/.config/nvim/vimrc.vim /root/.vimrc && \
-    nvim --headless -c 'Lazy install' -c 'Lazy update' -c 'quit' && \
+    nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     GOROOT=/go GOPATH=/root/go /go/bin/go install golang.org/x/tools/gopls@latest && \
     mkdir -p /root/secrets && \

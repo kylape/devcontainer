@@ -97,3 +97,6 @@ if [[ -d "/var/run/secrets/kubernetes.io/serviceaccount/" ]]; then
     kubectl config set-context kubernetes --cluster=kubernetes --user=kubernetes
     kubectl config use-context kubernetes
 fi
+
+# Update Lazy plugins
+nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")'
