@@ -76,7 +76,7 @@ if [[ ! -d "$HOME/src/zettelkasten" ]]; then
 fi
 
 function cloneghrepos() {
-    for r in "stackrox/stackrox" "kylape/neovim-config" "kylape/stackrox-tekton" "kylape/devcontainer" "kylape/pac-demo"; do
+    for r in "neovim-config" "stackrox-tekton" "devcontainer" "pac-demo" "scratchpad"; do
         gh repo clone $r
     done
 }
