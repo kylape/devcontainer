@@ -5,7 +5,7 @@ ZSH_THEME="amuse"
 
 DISABLE_AUTO_TITLE="true"
 
-plugins=(git vi-mode)
+plugins=(git vi-mode zsh-fzf-history-search)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -32,7 +32,6 @@ export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
 export GPG_TTY=$(tty)
 
-source /usr/share/fzf/shell/key-bindings.zsh
 
 local auth_sock=$(ls -d /tmp/ssh-X*/* 2>/dev/null)
 

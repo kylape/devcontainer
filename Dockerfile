@@ -24,6 +24,7 @@ RUN touch /root/.ssh/authorized_keys && \
     ln -s /root/.config/nvim/vimrc.vim /root/.vimrc && \
     nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
+    git clone https://github.com/joshskidmore/zsh-fzf-history-search ~/.oh-my-zsh/plugins/zsh-fzf-history-search && \
     GOROOT=/go GOPATH=/root/go /go/bin/go install golang.org/x/tools/gopls@latest && \
     mkdir -p /root/secrets && \
     mkdir -p /root/.config/gh && mkdir -p /root/.config/ripgrep
