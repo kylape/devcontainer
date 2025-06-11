@@ -10,6 +10,7 @@ plugins=(git vi-mode zsh-fzf-history-search)
 source $ZSH/oh-my-zsh.sh
 
 export TERMINAL=alacritty
+export TERM=xterm-256color
 set -o vi
 
 alias ll="ls -l --color=auto"
@@ -98,4 +99,4 @@ if [[ -d "/var/run/secrets/kubernetes.io/serviceaccount/" ]]; then
 fi
 
 # Update Lazy plugins
-nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")'
+nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' | grep HEAD
