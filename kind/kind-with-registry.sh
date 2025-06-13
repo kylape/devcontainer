@@ -2,6 +2,7 @@
 set -o errexit
 
 KIND=kind
+mkdir /tmp/kind
 
 # 1. Create registry container unless it already exists
 reg_name='kind-registry'
@@ -96,3 +97,6 @@ data:
     host: "localhost:${reg_port}"
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
+
+kind get kubeconfig > ~/.kube/config
+kubectl patch -n local-path-storage configmap local-path-config --patch-file local-path-config.yaml
