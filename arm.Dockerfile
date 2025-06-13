@@ -7,7 +7,7 @@ RUN VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt
 RUN dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-ARM64.rpm && \
     dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.aarch64.rpm
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
-RUN dnf install -y neovim sshd tmux zsh yq tig procps-ng rbw htop age man-db pinentry gh fzf buildah
+RUN dnf install -y neovim sshd tmux zsh yq tig procps-ng rbw htop age man-db pinentry gh fzf buildah patch
 
 RUN mkdir -p /root/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
