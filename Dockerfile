@@ -1,11 +1,41 @@
 FROM quay.io/klape/stackrox-builder:latest
 
-RUN curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" > /usr/bin/kubectl && chmod +x /usr/bin/kubectl
-RUN VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt) \
-    curl -L https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-amd64 > /usr/bin/virtctl && \
+RUN ARCH=$(uname -m) && \
+    case "${ARCH}" in \
+        "x86_64") KUBECTL_ARCH="amd64" ;; \
+        "aarch64") KUBECTL_ARCH="arm64" ;; \
+        *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
+    esac && \
+    curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${KUBECTL_ARCH}/kubectl" > /usr/bin/kubectl && \
+    chmod +x /usr/bin/kubectl
+
+RUN ARCH=$(uname -m) && \
+    case "${ARCH}" in \
+        "x86_64") VIRTCTL_ARCH="amd64" ;; \
+        "aarch64") VIRTCTL_ARCH="arm64" ;; \
+        *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
+    esac && \
+    VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt) && \
+    curl -L https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-${VIRTCTL_ARCH} > /usr/bin/virtctl && \
     chmod +x /usr/bin/virtctl
-RUN dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-64bit.rpm && \
-    dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.x86_64.rpm
+
+RUN ARCH=$(uname -m) && \
+    case "${ARCH}" in \
+        "x86_64") \
+            TEKTON_ARCH="64bit" && \
+            SOPS_ARCH="x86_64" \
+            ;; \
+        "aarch64") \
+            TEKTON_ARCH="ARM64" && \
+            SOPS_ARCH="aarch64" \
+            ;; \
+        *) \
+            echo "Unsupported architecture: ${ARCH}" && exit 1 \
+            ;; \
+    esac && \
+    dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-${TEKTON_ARCH}.rpm && \
+    dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm
+
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 RUN dnf install -y neovim sshd tmux zsh yq tig procps-ng rbw htop age man-db pinentry gh fzf buildah patch file
 
