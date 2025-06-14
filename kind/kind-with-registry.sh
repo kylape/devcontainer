@@ -39,23 +39,12 @@ kubeadmConfigPatches:
     serviceSubnet: $(sudo podman network inspect kind | jq -r '.[0].subnets[0].subnet')
 nodes:
 - role: control-plane
+  extraPortMappings:
+  - containerPort: 32222
+    hostPort: 2222
   extraMounts:
   - containerPath: /local
     hostPath: /tmp/kind
-#  - containerPath: /var/lib/kubelet
-#    hostPath: "/tmp/topolvm-example/controller"
-#    propagation: Bidirectional
-#- role: worker
-#  extraMounts:
-#  - containerPath: /local
-#    hostPath: /tmp/kind
-#  - containerPath: /run/topolvm
-#    hostPath: "/tmp/topolvm-example/lvmd"
-#  - containerPath: /var/lib/kubelet
-#    hostPath: "/tmp/topolvm-example/worker"
-#    propagation: Bidirectional
-#  - containerPath: /dev
-#    hostPath: /dev
 EOF
 
 # 3. Add the registry config to the nodes
