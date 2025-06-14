@@ -1,43 +1,38 @@
-FROM quay.io/klape/stackrox-builder:latest
-
-RUN ARCH=$(uname -m) && \
-    case "${ARCH}" in \
-        "x86_64") KUBECTL_ARCH="amd64" ;; \
-        "aarch64") KUBECTL_ARCH="arm64" ;; \
-        *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
-    esac && \
-    curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${KUBECTL_ARCH}/kubectl" > /usr/bin/kubectl && \
-    chmod +x /usr/bin/kubectl
-
-RUN ARCH=$(uname -m) && \
-    case "${ARCH}" in \
-        "x86_64") VIRTCTL_ARCH="amd64" ;; \
-        "aarch64") VIRTCTL_ARCH="arm64" ;; \
-        *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
-    esac && \
-    VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt) && \
-    curl -L https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-${VIRTCTL_ARCH} > /usr/bin/virtctl && \
-    chmod +x /usr/bin/virtctl
+FROM quay.io/fedora/fedora-toolbox:43
 
 RUN ARCH=$(uname -m) && \
     case "${ARCH}" in \
         "x86_64") \
+            KUBECTL_ARCH="amd64" && \
+            VIRTCTL_ARCH="amd64" && \
             TEKTON_ARCH="64bit" && \
-            SOPS_ARCH="x86_64" \
-            ;; \
+            SOPS_ARCH="x86_64" && \
+            MC_ARCH="amd64" && \
+            GO_ARCH="amd64" \
+        ;; \
         "aarch64") \
+            KUBECTL_ARCH="arm64" && \
+            VIRTCTL_ARCH="arm64" && \
             TEKTON_ARCH="ARM64" && \
-            SOPS_ARCH="aarch64" \
-            ;; \
-        *) \
-            echo "Unsupported architecture: ${ARCH}" && exit 1 \
-            ;; \
+            SOPS_ARCH="aarch64" && \
+            MC_ARCH="arm64" && \
+            GO_ARCH="arm64" \
+        ;; \
+        *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
     esac && \
+    curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${KUBECTL_ARCH}/kubectl" > /usr/bin/kubectl && \
+    chmod +x /usr/bin/kubectl && \
+    VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt) && \
+    curl -L https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-${VIRTCTL_ARCH} > /usr/bin/virtctl && \
+    chmod +x /usr/bin/virtctl && \
     dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-${TEKTON_ARCH}.rpm && \
-    dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm
+    dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm && \
+    curl https://dl.min.io/client/mc/release/linux-${MC_ARCH}/mc -L > /usr/bin/mc && \
+    curl https://go.dev/dl/go1.24.4.linux-${GO_ARCH}.tar.gz -L > /go.tar.gz && \
+    tar xzf /go.tar.gz 
 
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
-RUN dnf install -y neovim sshd tmux zsh yq tig procps-ng rbw htop age man-db pinentry gh fzf buildah patch file
+RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd
 
 RUN mkdir -p /root/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
