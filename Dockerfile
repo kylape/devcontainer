@@ -20,14 +20,13 @@ RUN ARCH=$(uname -m) && \
         ;; \
         *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
     esac && \
+    VIRTCTL_VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt) && \
     curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${KUBECTL_ARCH}/kubectl" > /usr/bin/kubectl && \
-    chmod +x /usr/bin/kubectl && \
-    VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt) && \
-    curl -L https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/virtctl-${VERSION}-linux-${VIRTCTL_ARCH} > /usr/bin/virtctl && \
-    chmod +x /usr/bin/virtctl && \
+    curl -L https://github.com/kubevirt/kubevirt/releases/download/${VIRTCTL_VERSION}/virtctl-${VIRTCTL_VERSION}-linux-${VIRTCTL_ARCH} > /usr/bin/virtctl && \
+    curl -L https://dl.min.io/client/mc/release/linux-${MC_ARCH}/mc > /usr/bin/mc && \
+    chmod +x /usr/bin/kubectl /usr/bin/virtctl /usr/bin/mc && \
     dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-${TEKTON_ARCH}.rpm && \
     dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm && \
-    curl https://dl.min.io/client/mc/release/linux-${MC_ARCH}/mc -L > /usr/bin/mc && \
     curl https://go.dev/dl/go1.24.4.linux-${GO_ARCH}.tar.gz -L > /go.tar.gz && \
     tar xzf /go.tar.gz 
 
