@@ -2,13 +2,12 @@
 set -o errexit
 
 KIND=kind
-mkdir /tmp/kind
 
 # 1. Create registry container unless it already exists
 reg_name='kind-registry'
 reg_port='5001'
-if [ "$(docker inspect -f '{{.State.Running}}' "${reg_name}" 2>/dev/null || true)" != 'true' ]; then
-  docker run \
+if [ "$(podman inspect -f '{{.State.Running}}' "${reg_name}" 2>/dev/null || true)" != 'true' ]; then
+  podman run \
     -d --restart=always -p "127.0.0.1:${reg_port}:5000" --network bridge --name "${reg_name}" \
     registry:2
 fi
@@ -57,20 +56,20 @@ EOF
 # alias localhost:${reg_port} to the registry container when pulling images
 REGISTRY_DIR="/etc/containerd/certs.d"
 for node in $($KIND get nodes); do
-  docker exec "${node}" mkdir -p "${REGISTRY_DIR}/localhost:${reg_port}"
-  cat <<EOF | docker exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/localhost:${reg_port}/hosts.toml"
+  podman exec "${node}" mkdir -p "${REGISTRY_DIR}/localhost:${reg_port}"
+  cat <<EOF | podman exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/localhost:${reg_port}/hosts.toml"
 [host."http://${reg_name}:5000"]
 EOF
-  # docker exec "${node}" mkdir -p "${REGISTRY_DIR}/quay.io"
-  # cat <<EOF | docker exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/quay.io/hosts.toml"
+  # podman exec "${node}" mkdir -p "${REGISTRY_DIR}/quay.io"
+  # cat <<EOF | podman exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/quay.io/hosts.toml"
 # [host."https://quay.io"]
 # EOF
 done
 
 # 4. Connect the registry to the cluster network if not already connected
 # This allows kind to bootstrap the network but ensures they're on the same network
-if [ "$(docker inspect -f='{{json .NetworkSettings.Networks.kind}}' "${reg_name}")" = 'null' ]; then
-  docker network connect "kind" "${reg_name}"
+if [ "$(podman inspect -f='{{json .NetworkSettings.Networks.kind}}' "${reg_name}")" = 'null' ]; then
+  podman network connect "kind" "${reg_name}"
 fi
 
 # 5. Document the local registry
@@ -86,6 +85,3 @@ data:
     host: "localhost:${reg_port}"
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
-
-kind get kubeconfig > ~/.kube/config
-kubectl patch -n local-path-storage configmap local-path-config --patch-file local-path-config.yaml
