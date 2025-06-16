@@ -8,6 +8,9 @@ host/install-kind.sh
 
 mkdir -p /tmp/kind
 
+mkdir -p ~/.config/containers
+echo -e '[containers]\npids_limit = 100000' > ~/.config/containers/containers.conf
+
 host/kind-with-registry.sh
 
 kind get kubeconfig > ~/.kube/config
