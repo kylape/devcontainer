@@ -2,6 +2,7 @@
 
 sudo dnf update -y
 sudo loginctl enable-linger $USER
+curl https://github.com/kylape.keys >> ~/.ssh/authorized_keys
 
 host/install-kind.sh
 
