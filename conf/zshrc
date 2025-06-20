@@ -99,4 +99,4 @@ if [[ -d "/var/run/secrets/kubernetes.io/serviceaccount/" ]]; then
 fi
 
 # Update Lazy plugins
-nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' | grep HEAD
+nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' > /dev/null

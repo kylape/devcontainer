@@ -17,4 +17,4 @@ kind get kubeconfig > ~/.kube/config
 kubectl patch -n local-path-storage configmap local-path-config --patch-file host/local-path-config.yaml
 
 kubectl create -f resources/
-kubectl wait --for=condition=Available deploy/devcontainer
+kubectl wait --for=condition=Available --timeout=5m deploy/devcontainer
