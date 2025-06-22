@@ -58,6 +58,7 @@ COPY conf/zshrc /root/.zshrc
 COPY conf/gitconfig /root/.gitconfig
 COPY conf/gh.yaml /root/.config/gh/config.yml
 COPY conf/ripgrep /root/.config/ripgrep/config
+COPY conf/move-in /root/move-in
 COPY secrets/* /root/secrets
 
 EXPOSE 22

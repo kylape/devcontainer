@@ -1,0 +1,33 @@
+#!/bin/zsh
+
+cd src
+
+for r in "neovim-config" "stackrox-tekton" "devcontainer" "pac-demo" "scratchpad" "stackrox/stackrox"; do
+    gh repo clone $r
+done
+
+cd stackrox-tekton
+./setup.sh
+./copy-image.sh
+
+# KubeVirt
+export RELEASE=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
+kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/${RELEASE}/kubevirt-operator.yaml
+kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/${RELEASE}/kubevirt-cr.yaml
+kubectl -n kubevirt wait kv kubevirt --for condition=Available
+
+# CDI
+export TAG=$(curl -s -w %{redirect_url} https://github.com/kubevirt/containerized-data-importer/releases/latest)
+export VERSION=$(echo ${TAG##*/})
+kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-operator.yaml
+kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
+
+cd ../stackrox
+gco vmvm
+make bin/installer
+bin/installer apply central
+make bin/agent bin/central bin/kubernetes
+kubectl wait --for=condition=Available deploy/central
+sleep 10
+bin/installer apply crs && \
+bin/installer apply securedcluster
