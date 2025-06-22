@@ -16,7 +16,7 @@ hostname=$2
 tarfile=$(mktemp)
 tar cvf "$tarfile" host/ resources/ setup.sh
 scp -i "$keyfile" "$tarfile" "fedora@$hostname:/tmp/setup.tar"
-ssh -i "$keyfile" fedora@$hostname sh -c "cd /tmp; tar xvf /tmp/setup.tar; ./setup.sh"
+ssh -i "$keyfile" fedora@$hostname sh -c "cd /tmp; tar xvf /tmp/setup.tar; ./setup.sh -s"
 
 echo "Host devcontainer
     HostName localhost

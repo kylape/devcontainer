@@ -25,20 +25,23 @@ shift $((OPTIND-1))
 
 # Default behavior if no options provided
 sudo dnf update -y
+sudo dnf install -y jq tmux iotop htop vim
 sudo loginctl enable-linger $USER
 curl https://github.com/kylape.keys >> ~/.ssh/authorized_keys
 
 host/install-kind.sh
 
 mkdir -p /tmp/kind
-
-mkdir -p ~/.config/containers
-echo -e '[containers]\npids_limit = 100000' > ~/.config/containers/containers.conf
+mkdir -p ~/.kube
 
 if [[ as_root ]]; then
+    sudo mkdir -p /root/.config/containers
+    sudo sh -c "echo -e '[containers]\npids_limit = 100000' > /root/.config/containers/containers.conf"
     sudo host/kind-with-registry.sh
     echo "$(sudo kind get kubeconfig)" > ~/.kube/config
 else
+    mkdir -p ~/.config/containers
+    echo -e '[containers]\npids_limit = 100000' > ~/.config/containers/containers.conf
     host/kind-with-registry.sh
     kind get kubeconfig > ~/.kube/config
 fi
