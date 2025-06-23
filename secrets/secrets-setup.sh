@@ -30,10 +30,10 @@ check_dependencies() {
     command -v age >/dev/null 2>&1 || missing_deps+=("age")
     command -v sops >/dev/null 2>&1 || missing_deps+=("sops")
     command -v yq >/dev/null 2>&1 || missing_deps+=("yq")
+    command -v kubectl >/dev/null 2>&1 || missing_deps+=("kubectl")
     
     if [ ${#missing_deps[@]} -ne 0 ]; then
-        echo "Missing required dependencies: ${missing_deps[*]}" >&2
-        log "Install with: apt-get update && apt-get install -y age sops yq"
+        log "Missing required dependencies: ${missing_deps[*]}"
         exit 1
     fi
 }
@@ -121,6 +121,29 @@ decrypt_secrets() {
     if [[ "$github_api_key" != "" ]]; then
         log "GitHub API key extracted"
         echo "export GH_TOKEN=$github_api_key"
+    fi
+
+    local dockerconfig=$(echo "$decrypted_secrets" | yq eval '.dockerconfig' 2>/dev/null)
+    if [[ "$dockerconfig" != "" ]]; then
+        log "Dockerconfig extracted. Creating klape-pull-secret..."
+        kubectl create -f - || true <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: klape-pull-secret
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: $(echo "$dockerconfig" | tr -d '\n' | base64 -w 0)
+EOF
+        kubectl create -f - || true <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: klape-opaque-dockerconfig
+type: Opaque
+data:
+  config.json: $(echo "$dockerconfig" | tr -d '\n' | base64 -w 0)
+EOF
     fi
 }
 
