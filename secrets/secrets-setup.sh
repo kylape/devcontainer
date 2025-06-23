@@ -126,7 +126,7 @@ decrypt_secrets() {
     local dockerconfig=$(echo "$decrypted_secrets" | yq eval '.dockerconfig' 2>/dev/null)
     if [[ "$dockerconfig" != "" ]]; then
         log "Dockerconfig extracted. Creating klape-pull-secret..."
-        kubectl create -f - || true <<EOF
+        kubectl create -f - <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
@@ -135,7 +135,7 @@ type: kubernetes.io/dockerconfigjson
 data:
   .dockerconfigjson: $(echo "$dockerconfig" | tr -d '\n' | base64 -w 0)
 EOF
-        kubectl create -f - || true <<EOF
+        kubectl create -f - <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
