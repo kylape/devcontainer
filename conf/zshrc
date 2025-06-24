@@ -33,6 +33,12 @@ export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
 export GPG_TTY=$(tty)
 
+if [[ -d "/var/run/secrets/kubernetes.io/serviceaccount/" ]]; then
+    kubectl config set-cluster kubernetes --server=https://kubernetes.default.svc --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    kubectl config set-credentials kubernetes --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+    kubectl config set-context kubernetes --cluster=kubernetes --user=kubernetes
+    kubectl config use-context kubernetes
+fi
 
 local auth_sock=$(ls -d /tmp/ssh-X*/* 2>/dev/null)
 
@@ -90,13 +96,6 @@ git_dirty() {
 }
 
 PROMPT='✨ devcontainer ✨ $(git_dirty)'" $PROMPT"
-
-if [[ -d "/var/run/secrets/kubernetes.io/serviceaccount/" ]]; then
-    kubectl config set-cluster kubernetes --server=https://kubernetes.default.svc --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-    kubectl config set-credentials kubernetes --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-    kubectl config set-context kubernetes --cluster=kubernetes --user=kubernetes
-    kubectl config use-context kubernetes
-fi
 
 # Update Lazy plugins
 nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' > /dev/null
