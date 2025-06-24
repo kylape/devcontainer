@@ -27,6 +27,8 @@ shift $((OPTIND-1))
 sudo dnf update -y
 sudo dnf install -y jq tmux iotop htop vim
 sudo loginctl enable-linger $USER
+sudo sysctl fs.inotify.max_user_watches=524288
+sudo sysctl fs.inotify.max_user_instances=512
 curl https://github.com/kylape.keys >> ~/.ssh/authorized_keys
 
 host/install-kind.sh
@@ -35,11 +37,13 @@ mkdir -p /tmp/kind
 mkdir -p ~/.kube
 
 if [[ as_root ]]; then
+    sudo podman network create kind
     sudo mkdir -p /root/.config/containers
     sudo sh -c "echo -e '[containers]\npids_limit = 100000' > /root/.config/containers/containers.conf"
     sudo host/kind-with-registry.sh
     echo "$(sudo kind get kubeconfig)" > ~/.kube/config
 else
+    podman network create kind
     mkdir -p ~/.config/containers
     echo -e '[containers]\npids_limit = 100000' > ~/.config/containers/containers.conf
     host/kind-with-registry.sh
