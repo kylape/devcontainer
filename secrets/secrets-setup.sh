@@ -125,7 +125,9 @@ decrypt_secrets() {
 
     local dockerconfig=$(echo "$decrypted_secrets" | yq eval '.dockerconfig' 2>/dev/null)
     if [[ "$dockerconfig" != "" ]]; then
-        log "Dockerconfig extracted. Creating klape-pull-secret..."
+        log "Dockerconfig extracted"
+        mkdir -p ~/.docker
+        echo "$dockerconfig" > ~/.docker/config.json
         kubectl create -f - >/dev/null <<EOF
 apiVersion: v1
 kind: Secret
