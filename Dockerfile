@@ -51,7 +51,8 @@ RUN touch /root/.ssh/authorized_keys && \
     git clone https://github.com/joshskidmore/zsh-fzf-history-search ~/.oh-my-zsh/plugins/zsh-fzf-history-search && \
     GOROOT=/go GOPATH=/root/go /go/bin/go install golang.org/x/tools/gopls@latest && \
     mkdir -p /root/secrets && \
-    mkdir -p /root/.config/gh && mkdir -p /root/.config/ripgrep
+    mkdir -p /root/.config/gh && mkdir -p /root/.config/ripgrep && \
+    mkdir -p /root/.gnupg && chmod 700 /root/.gnupg
 
 COPY conf/tmux.conf /root/.tmux.conf
 COPY conf/zshrc /root/.zshrc
@@ -59,6 +60,7 @@ COPY conf/gitconfig /root/.gitconfig
 COPY conf/gh.yaml /root/.config/gh/config.yml
 COPY conf/ripgrep /root/.config/ripgrep/config
 COPY conf/move-in /root/move-in
+COPY conf/gpg-agent.conf /root/.gnupg/gpg-agent.conf
 COPY secrets/* /root/secrets
 
 EXPOSE 22
