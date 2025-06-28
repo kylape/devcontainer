@@ -52,7 +52,8 @@ RUN touch /root/.ssh/authorized_keys && \
     GOROOT=/go GOPATH=/root/go /go/bin/go install golang.org/x/tools/gopls@latest && \
     mkdir -p /root/secrets && \
     mkdir -p /root/.config/gh && mkdir -p /root/.config/ripgrep && \
-    mkdir -p /root/.gnupg && chmod 700 /root/.gnupg
+    mkdir -p /root/.gnupg && chmod 700 /root/.gnupg && \
+    npm install -g @anthropic-ai/claude-code
 
 COPY conf/tmux.conf /root/.tmux.conf
 COPY conf/zshrc /root/.zshrc
