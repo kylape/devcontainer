@@ -8,7 +8,7 @@ done
 
 cd stackrox-tekton
 ./setup.sh
-./copy-image.sh
+./copy-images.sh
 
 # KubeVirt
 export RELEASE=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
