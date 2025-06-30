@@ -37,7 +37,8 @@ RUN mkdir -p /root/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
     ssh-keygen -A && \
     npm -g install mcp-hub@latest && \
-    npm -g install yaml-language-server
+    npm -g install yaml-language-server && \
+    npm install -g @anthropic-ai/claude-code
 
 COPY conf/pam-sshd /etc/pam.d/sshd
 
@@ -53,7 +54,7 @@ RUN touch /root/.ssh/authorized_keys && \
     mkdir -p /root/secrets && \
     mkdir -p /root/.config/gh && mkdir -p /root/.config/ripgrep && \
     mkdir -p /root/.gnupg && chmod 700 /root/.gnupg && \
-    npm install -g @anthropic-ai/claude-code
+    export TZ='America/Chicago'
 
 COPY conf/tmux.conf /root/.tmux.conf
 COPY conf/zshrc /root/.zshrc
