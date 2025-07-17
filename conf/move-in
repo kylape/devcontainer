@@ -1,33 +1,31 @@
 #!/bin/zsh
 
+set -ex
+
+cd ~
+mc get s3/klape-devcontainer/claude.tar.gz ~/claude.tar.gz
+tar xzf claude.tar.gz
+rm claude.tar.gz
+
 cd src
 
-for r in "neovim-config" "stackrox-tekton" "devcontainer" "pac-demo" "scratchpad" "stackrox/stackrox"; do
+for r in "vulma" "neovim-config" "stackrox-tekton" "devcontainer" "pac-demo" "scratchpad" "stackrox/stackrox"; do
     gh repo clone $r
 done
 
 cd stackrox-tekton
-./setup.sh
+# ./setup.sh
 ./copy-images.sh
 
-# KubeVirt
-export RELEASE=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
-kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/${RELEASE}/kubevirt-operator.yaml
-kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/${RELEASE}/kubevirt-cr.yaml
-kubectl -n kubevirt wait kv kubevirt --for condition=Available
-
-# CDI
-export TAG=$(curl -s -w %{redirect_url} https://github.com/kubevirt/containerized-data-importer/releases/latest)
-export VERSION=$(echo ${TAG##*/})
-kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-operator.yaml
-kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
-
 cd ../stackrox
-git checkout vmvm
+git remote add kylape git@github.com:kylape/stackrox.git
+mc get s3/klape-devcontainer/0001-Add-tekton-pipelines.patch .
+mc get s3/klape-devcontainer/0001-Patchset-for-go-based-installer-single-image-build.patch .
+git am < 0001-Patchset-for-go-based-installer-single-image-build.patch
+git am < 0001-Add-tekton-pipelines.patch
 make bin/installer
 bin/installer apply central
-make bin/agent bin/central bin/kubernetes
-kubectl wait --for=condition=Available deploy/central
+kubectl -n stackrox wait --timeout=5m --for=condition=Available deploy/central
 sleep 10
-bin/installer apply crs && \
+bin/installer apply crs
 bin/installer apply securedcluster
