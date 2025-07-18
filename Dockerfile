@@ -31,7 +31,7 @@ RUN ARCH=$(uname -m) && \
     tar xzf /go.tar.gz 
 
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
-RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold
+RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo
 
 RUN mkdir -p /root/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
