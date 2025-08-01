@@ -28,7 +28,11 @@ RUN ARCH=$(uname -m) && \
     dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-${TEKTON_ARCH}.rpm && \
     dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm && \
     curl https://go.dev/dl/go1.24.4.linux-${GO_ARCH}.tar.gz -L > /go.tar.gz && \
-    tar xzf /go.tar.gz 
+    tar xzf /go.tar.gz  && \
+    curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-arm.tar.gz -L > /gcloud.tar.gz && \
+    cd /var && \
+    tar xzf /gcloud.tar.gz && \
+    rm /gcloud.tar.gz /go.tar.gz
 
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo
