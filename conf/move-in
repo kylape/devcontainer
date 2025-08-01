@@ -19,13 +19,4 @@ cd stackrox-tekton
 
 cd ../stackrox
 git remote add kylape git@github.com:kylape/stackrox.git
-mc get s3/klape-devcontainer/0001-Add-tekton-pipelines.patch .
-mc get s3/klape-devcontainer/0001-Patchset-for-go-based-installer-single-image-build.patch .
-git am < 0001-Patchset-for-go-based-installer-single-image-build.patch
-git am < 0001-Add-tekton-pipelines.patch
-make bin/installer
-bin/installer apply central
-kubectl -n stackrox wait --timeout=5m --for=condition=Available deploy/central
-sleep 10
-bin/installer apply crs
-bin/installer apply securedcluster
+git fetch kylape
