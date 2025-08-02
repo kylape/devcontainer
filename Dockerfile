@@ -8,7 +8,8 @@ RUN ARCH=$(uname -m) && \
             TEKTON_ARCH="64bit" && \
             SOPS_ARCH="x86_64" && \
             MC_ARCH="amd64" && \
-            GO_ARCH="amd64" \
+            GO_ARCH="amd64" && \
+            GCLOUD_ARCH="x86" \
         ;; \
         "aarch64") \
             KUBECTL_ARCH="arm64" && \
@@ -16,7 +17,8 @@ RUN ARCH=$(uname -m) && \
             TEKTON_ARCH="ARM64" && \
             SOPS_ARCH="aarch64" && \
             MC_ARCH="arm64" && \
-            GO_ARCH="arm64" \
+            GO_ARCH="arm64" && \
+            GCLOUD_ARCH="arm" \
         ;; \
         *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
     esac && \
@@ -29,7 +31,7 @@ RUN ARCH=$(uname -m) && \
     dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm && \
     curl https://go.dev/dl/go1.24.4.linux-${GO_ARCH}.tar.gz -L > /go.tar.gz && \
     tar xzf /go.tar.gz  && \
-    curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-arm.tar.gz -L > /gcloud.tar.gz && \
+    curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-${GCLOUD_ARCH}.tar.gz -L > /gcloud.tar.gz && \
     cd /var && \
     tar xzf /gcloud.tar.gz && \
     rm /gcloud.tar.gz /go.tar.gz
