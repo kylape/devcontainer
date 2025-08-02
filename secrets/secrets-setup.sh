@@ -147,6 +147,11 @@ data:
   config.json: $(echo "$dockerconfig" | tr -d '\n' | base64 -w 0)
 EOF
     fi
+
+    echo "$decrypted_secrets" | yq eval .gcloud.env | sed -e 's/: /=/' -e 's/^/export /'
+
+    mkdir -p ~/.config
+    echo "$decrypted_secrets" | yq eval .gcloud.config | base64 -d | zstd -d - | tar -C ~/.config -xf -
 }
 
 setup_ssh() {
