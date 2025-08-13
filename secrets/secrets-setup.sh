@@ -148,6 +148,7 @@ data:
 EOF
     fi
 
+    echo "$decrypted_secrets" | yq eval .jira.env | sed -e 's/: /=/' -e 's/^/export /'
     echo "$decrypted_secrets" | yq eval .gcloud.env | sed -e 's/: /=/' -e 's/^/export /'
 
     mkdir -p ~/.config
