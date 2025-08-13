@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
 # Initialize flags
-as_root=false
-mem_mapped_pvcs=false
+as_root=""
+mem_mapped_pvcs=""
 
 # Parse command line arguments
 while getopts "sm" opt; do
