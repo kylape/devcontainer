@@ -43,7 +43,7 @@ nodes:
     hostPort: 2222
   extraMounts:
   - containerPath: /local
-    hostPath: /tmp/kind
+    hostPath: /root/kind
 EOF
 
 # 3. Add the registry config to the nodes

@@ -15,21 +15,6 @@ hostname=$2
 
 tarfile=$(mktemp)
 tar cvf "$tarfile" host/ resources/ setup.sh
-scp -i "$keyfile" "$tarfile" "fedora@$hostname:/tmp/setup.tar"
-ssh -i "$keyfile" fedora@$hostname sh -c "cd /tmp; tar xvf /tmp/setup.tar; ./setup.sh -s"
+scp -i "$keyfile" "$tarfile" "ec2host:/tmp/setup.tar"
+ssh -i "$keyfile" ec2host sh -c "cd /tmp; tar xvf /tmp/setup.tar; ./setup.sh -sm"
 
-echo "Host devcontainer
-    HostName localhost
-    Port 2222
-    User root
-    ProxyJump ec2host
-    DynamicForward 8080
-    RemoteCommand /usr/bin/zsh
-    RequestTTY yes
-    LogLevel QUIET
-
-Host ec2host
-    HostName $hostname
-    User fedora
-    Port 22
-    IdentityFile $keyfile"

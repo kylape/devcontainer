@@ -33,7 +33,24 @@ curl https://github.com/kylape.keys >> ~/.ssh/authorized_keys
 
 host/install-kind.sh
 
-mkdir -p /tmp/kind
+sudo mkfs.btrfs /dev/nvme1n1
+sudo mount /dev/nvme1n1 /root
+
+sudo mkdir -p /root/kind
+sudo mkdir -p /root/containers/storage
+
+sudo tee /etc/containers/storage.conf > /dev/null << 'EOF'
+[storage]
+driver = "overlay"
+graphroot = "/root/containers/storage"
+runroot = "/run/containers/storage"
+EOF
+
+# Add the context rule for the new storage location
+sudo semanage fcontext -a -t container_var_lib_t "/root/containers/storage(/.*)?"
+sudo semanage fcontext -a -t container_file_t "/root/containers/storage/overlay-containers(/.*)?"
+sudo restorecon -R /root/containers/storage
+
 mkdir -p ~/.kube
 
 if [[ as_root ]]; then
