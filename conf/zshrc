@@ -14,7 +14,6 @@ export TERM=xterm-256color
 set -o vi
 
 alias ll="ls -l --color=auto"
-alias today='gcalcli 7am 6pm'
 alias k=kubectl
 alias vim=nvim
 alias rhldap="python /home/klape/src/ldap/rh_ldap.py"
@@ -75,22 +74,17 @@ setopt PROMPT_SUBST
 export HISTSIZE=10000         # Lines in memory
 export SAVEHIST=10000         # Lines saved to file
 
-mkdir -p ~/src
+mkdir -p ~/workspace
 cd
 
-if [[ ! -d "$HOME/src/zettelkasten" ]]; then
-    gh repo clone kylape/zettelkasten src/zettelkasten
-fi
-
-function cloneghrepos() {
-    for r in "neovim-config" "stackrox-tekton" "devcontainer" "pac-demo" "scratchpad"; do
-        gh repo clone $r
-    done
-}
-
 git_dirty() {
-    for repo in $(find ~/src -maxdepth 1 -type d -name '[^\.]*'); do
-        if [[ "$repo" != "/root/src" && "$repo" != "/root/src/lost+found" && -n "$(git -C "$repo" status --porcelain)" ]]; then
+    for repo in $(find ~/workspace/src -maxdepth 1 -type d -name '[^\.]*'); do
+        if [[ "$repo" != "/root/workspace/src" && -n "$(git -C "$repo" status --porcelain)" ]]; then
+            echo -en "\n💾 $repo"
+        fi
+    done
+    for repo in ("zettelkasten" "scratchpad" ""); do
+        if [[ -n "$(git -C ~/workspace/$repo status --porcelain)" ]]; then
             echo -en "\n💾 $repo"
         fi
     done

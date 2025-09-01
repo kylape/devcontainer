@@ -24,9 +24,9 @@ spec:
         - name: ssh
           containerPort: 22
         volumeMounts:
-        - name: src
-          mountPath: /root/src
+        - name: workspace
+          mountPath: /root/workspace
       volumes:
-      - name: src
+      - name: workspace
         persistentVolumeClaim:
           claimName: devcontainer
