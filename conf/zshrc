@@ -83,7 +83,8 @@ git_dirty() {
             echo -en "\n💾 $repo"
         fi
     done
-    for repo in ("zettelkasten" "scratchpad" ""); do
+    repos=("zettelkasten" "scratchpad" "")
+    for repo in "${repos[@]}"; do
         if [[ -n "$(git -C ~/workspace/$repo status --porcelain)" ]]; then
             echo -en "\n💾 $repo"
         fi
