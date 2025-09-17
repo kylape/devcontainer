@@ -6,3 +6,6 @@ cd ~
 mc get s3/klape-devcontainer/claude.tar.gz ~/claude.tar.gz
 tar xzf claude.tar.gz
 rm claude.tar.gz
+
+cd workspace
+gh repo clone workspace .
