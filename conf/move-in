@@ -9,3 +9,4 @@ rm claude.tar.gz
 
 cd workspace
 gh repo clone workspace .
+./move-in
