@@ -93,11 +93,13 @@ git_dirty() {
 
 PROMPT='✨ devcontainer ✨ $(git_dirty)'" $PROMPT"
 
-# Update Lazy plugins
-nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' > /dev/null
-
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/var/google-cloud-sdk/path.zsh.inc' ]; then . '/var/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/var/google-cloud-sdk/completion.zsh.inc' ]; then . '/var/google-cloud-sdk/completion.zsh.inc'; fi
+
+# Update Lazy plugins
+# Keep this at the bottom of the script since this is slow and I often want to cancel this
+echo "Updating nvim plugins..."
+nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' > /dev/null
