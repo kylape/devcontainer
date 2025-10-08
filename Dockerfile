@@ -70,6 +70,7 @@ COPY conf/ripgrep /root/.config/ripgrep/config
 COPY conf/move-in /root/move-in
 COPY conf/gpg-agent.conf /root/.gnupg/gpg-agent.conf
 COPY secrets/* /root/secrets
+COPY bin/* /usr/bin
 
 EXPOSE 22
 CMD ["/usr/bin/sshd", "-D"]
