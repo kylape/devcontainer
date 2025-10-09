@@ -54,6 +54,7 @@ sudo restorecon -R /root/containers/storage
 mkdir -p ~/.kube
 
 if [[ as_root ]]; then
+    sudo systemctl enable --now podman.socket
     sudo podman network create kind
     sudo mkdir -p /root/.config/containers
     sudo sh -c "echo -e '[containers]\npids_limit = 100000' > /root/.config/containers/containers.conf"

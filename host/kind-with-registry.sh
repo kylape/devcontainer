@@ -44,6 +44,14 @@ nodes:
   extraMounts:
   - containerPath: /local
     hostPath: /root/kind
+  - containerPath: /sys/kernel/security
+    hostPath: /sys/kernel/security
+  - containerPath: /sys/kernel/debug
+    hostPath: /sys/kernel/debug
+  - containerPath: /sys/fs/bpf
+    hostPath: /sys/fs/bpf
+  - containerPath: /run/podman/podman.sock
+    hostPath: /run/podman/podman.sock
 EOF
 
 # 3. Add the registry config to the nodes

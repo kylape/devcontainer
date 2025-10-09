@@ -15,18 +15,52 @@ spec:
         app: devcontainer
     spec:
       serviceAccountName: admin
+      hostPID: true
       containers:
       - image: ghcr.io/kylape/devcontainer:main
         imagePullPolicy: Always
         name: devcontainer
         resources: {}
+        securityContext:
+          privileged: true
         ports:
         - name: ssh
           containerPort: 22
         volumeMounts:
         - name: workspace
           mountPath: /root/workspace
+        - name: sys-kernel-security
+          mountPath: /sys/kernel/security
+          readOnly: false
+        - name: sys-kernel-debug
+          mountPath: /sys/kernel/debug
+          readOnly: false
+        - name: bpffs
+          mountPath: /sys/fs/bpf
+          readOnly: false
+        - name: podman-storage
+          mountPath: /var/lib/containers
+        - name: dev-fuse
+          mountPath: /dev/fuse
       volumes:
       - name: workspace
         persistentVolumeClaim:
           claimName: devcontainer
+      - name: sys-kernel-security
+        hostPath:
+          path: /sys/kernel/security
+          type: Directory
+      - name: sys-kernel-debug
+        hostPath:
+          path: /sys/kernel/debug
+          type: Directory
+      - name: bpffs
+        hostPath:
+          path: /sys/fs/bpf
+          type: DirectoryOrCreate
+      - name: podman-storage
+        emptyDir: {}
+      - name: dev-fuse
+        hostPath:
+          path: /dev/fuse
+          type: CharDevice
