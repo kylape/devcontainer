@@ -34,7 +34,7 @@ export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 export GPG_TTY=$(tty)
 export CONTAINER_HOST=unix:///run/podman/podman.sock
 
-if [[ -d "/var/run/secrets/kubernetes.io/serviceaccount/" ]]; then
+if [[ -d "/var/run/secrets/kubernetes.io/serviceaccount/" && -z "$KUBECONFIG" ]]; then
     kubectl config set-cluster kubernetes --server=https://kubernetes.default.svc --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     kubectl config set-credentials kubernetes --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
     kubectl config set-context kubernetes --cluster=kubernetes --user=kubernetes
