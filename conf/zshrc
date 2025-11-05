@@ -25,7 +25,7 @@ export PATH=$HOME/bin:$HOME/conf/bin:$HOME/.local/bin:$HOME/js/node_modules/.bin
 export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin
 export NVIM_TUI_ENABLE_TRUE_COLOR=1
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
-export TZ='America/Chicago'
+export TZ='America/New_York'
 
 export GOROOT=/go
 export GOPATH=~/go
