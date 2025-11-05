@@ -58,6 +58,7 @@ RUN touch /root/.ssh/authorized_keys && \
     git clone https://github.com/joshskidmore/zsh-fzf-history-search ~/.oh-my-zsh/plugins/zsh-fzf-history-search && \
     GOROOT=/go GOPATH=/root/go /go/bin/go install golang.org/x/tools/gopls@latest && \
     GOROOT=/go GOPATH=/root/go /go/bin/go install github.com/ankitpokhrel/jira-cli/cmd/jira@v1.6.0 && \
+    GOROOT=/go GOPATH=/root/go /go/bin/go install sigs.k8s.io/kind@v0.30.0 && \
     mkdir -p /root/secrets && \
     mkdir -p /root/.config/gh && mkdir -p /root/.config/ripgrep && \
     mkdir -p /root/.gnupg && chmod 700 /root/.gnupg
