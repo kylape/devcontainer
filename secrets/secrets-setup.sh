@@ -125,6 +125,7 @@ decrypt_secrets() {
 
     echo "$decrypted_secrets" | yq eval .jira.env | sed -e 's/: /=/' -e 's/^/export /'
     echo "$decrypted_secrets" | yq eval .gcloud.env | sed -e 's/: /=/' -e 's/^/export /'
+    echo "$decrypted_secrets" | yq eval .redhat.env | sed -e 's/: /=/' -e 's/^/export /'
 
     mkdir -p ~/.config
     echo "$decrypted_secrets" | yq eval .gcloud.config | base64 -d | zstd -d - | tar -C ~/.config -xf -
