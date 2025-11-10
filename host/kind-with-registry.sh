@@ -64,14 +64,25 @@ EOF
 # alias localhost:${reg_port} to the registry container when pulling images
 REGISTRY_DIR="/etc/containerd/certs.d"
 for node in $($KIND get nodes); do
+  # Configure localhost:${reg_port} alias
   podman exec "${node}" mkdir -p "${REGISTRY_DIR}/localhost:${reg_port}"
   cat <<EOF | podman exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/localhost:${reg_port}/hosts.toml"
+server = "http://${reg_name}:5000"
+
 [host."http://${reg_name}:5000"]
+  capabilities = ["pull", "resolve"]
+  skip_verify = true
 EOF
-  # podman exec "${node}" mkdir -p "${REGISTRY_DIR}/quay.io"
-  # cat <<EOF | podman exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/quay.io/hosts.toml"
-# [host."https://quay.io"]
-# EOF
+
+  # Configure kind-registry:5000 alias (used by StackRox deployments)
+  podman exec "${node}" mkdir -p "${REGISTRY_DIR}/${reg_name}:5000"
+  cat <<EOF | podman exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/${reg_name}:5000/hosts.toml"
+server = "http://${reg_name}:5000"
+
+[host."http://${reg_name}:5000"]
+  capabilities = ["pull", "resolve"]
+  skip_verify = true
+EOF
 done
 
 # 4. Connect the registry to the cluster network if not already connected
