@@ -28,7 +28,9 @@ export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 export TZ='America/New_York'
 
 export GOROOT=/go
-export GOPATH=~/go
+export GOPATH=~/workspace/go
+export GOCACHE=~/workspace/.cache/go-build
+export GOMODCACHE=~/workspace/go/pkg/mod
 export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
 export GPG_TTY=$(tty)
