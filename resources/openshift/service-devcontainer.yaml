@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: devcontainer
+  name: devcontainer
+spec:
+  ports:
+  - nodePort: 32222
+    port: 2222
+    protocol: TCP
+    targetPort: 22
+  selector:
+    app: devcontainer
+  type: NodePort

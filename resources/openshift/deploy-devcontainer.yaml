@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: devcontainer
+  name: devcontainer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devcontainer
+  template:
+    metadata:
+      labels:
+        app: devcontainer
+    spec:
+      serviceAccountName: admin
+      containers:
+      - image: ghcr.io/kylape/devcontainer:main
+        command: ["sleep", "infinity"]
+        imagePullPolicy: Always
+        name: devcontainer
+        ports:
+        - name: ssh
+          containerPort: 22
+        volumeMounts:
+        - name: workspace
+          mountPath: /root/workspace
+      volumes:
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: devcontainer
