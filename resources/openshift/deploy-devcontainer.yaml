@@ -25,7 +25,7 @@ spec:
           containerPort: 22
         volumeMounts:
         - name: workspace
-          mountPath: /root/workspace
+          mountPath: /opt/workspace
       volumes:
       - name: workspace
         persistentVolumeClaim:

@@ -77,7 +77,7 @@ kubectl delete pod -l app=devcontainer
 - Secrets encrypted with SOPS/age
 - GPG agent configured for longer passphrase caching
 - SSH keys loaded from encrypted storage
-- Secrets mounted in `/root/secrets/` directory
+- Secrets mounted in `/opt/secrets/` directory
 
 ### Networking
 - SSH proxy jump configuration through EC2 host

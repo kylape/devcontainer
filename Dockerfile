@@ -39,8 +39,9 @@ RUN ARCH=$(uname -m) && \
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo git-lfs libbpf-devel clang podman-docker tailscale
 
-RUN mkdir -p /root/.ssh && \
+RUN mkdir -p /opt/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
+    echo "AuthorizedKeysFile /opt/.ssh/authorized_keys" >> /etc/ssh/sshd_config && \
     ssh-keygen -A && \
     npm -g install mcp-hub@latest && \
     npm -g install yaml-language-server && \
@@ -48,30 +49,38 @@ RUN mkdir -p /root/.ssh && \
 
 COPY conf/pam-sshd /etc/pam.d/sshd
 
-RUN touch /root/.ssh/authorized_keys && \
-    curl -L https://github.com/kylape.keys >> /root/.ssh/authorized_keys && \
-    mkdir -p /root/.config && \
-    git -C /root/.config clone https://github.com/kylape/neovim-config.git nvim && \
-    ln -s /root/.config/nvim/vimrc.vim /root/.vimrc && \
+RUN touch /opt/.ssh/authorized_keys && \
+    curl -L https://github.com/kylape.keys >> /opt/.ssh/authorized_keys && \
+    mkdir -p /opt/.config && \
+    git -C /opt/.config clone https://github.com/kylape/neovim-config.git nvim && \
+    ln -s /opt/.config/nvim/vimrc.vim /opt/.vimrc && \
     nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     git clone https://github.com/joshskidmore/zsh-fzf-history-search ~/.oh-my-zsh/plugins/zsh-fzf-history-search && \
-    GOROOT=/go GOPATH=/root/go /go/bin/go install golang.org/x/tools/gopls@latest && \
-    GOROOT=/go GOPATH=/root/go /go/bin/go install github.com/ankitpokhrel/jira-cli/cmd/jira@v1.6.0 && \
-    GOROOT=/go GOPATH=/root/go /go/bin/go install sigs.k8s.io/kind@v0.30.0 && \
-    mkdir -p /root/secrets && \
-    mkdir -p /root/.config/gh && mkdir -p /root/.config/ripgrep && \
-    mkdir -p /root/.gnupg && chmod 700 /root/.gnupg
+    GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest && \
+    GOROOT=/go GOPATH=/opt/go /go/bin/go install github.com/ankitpokhrel/jira-cli/cmd/jira@v1.6.0 && \
+    GOROOT=/go GOPATH=/opt/go /go/bin/go install sigs.k8s.io/kind@v0.30.0 && \
+    mkdir -p /opt/secrets && \
+    mkdir -p /opt/.config/gh && mkdir -p /opt/.config/ripgrep && \
+    mkdir -p /opt/.gnupg && chmod 700 /opt/.gnupg
 
-COPY conf/tmux.conf /root/.tmux.conf
-COPY conf/zshrc /root/.zshrc
-COPY conf/gitconfig /root/.gitconfig
-COPY conf/gh.yaml /root/.config/gh/config.yml
-COPY conf/ripgrep /root/.config/ripgrep/config
-COPY conf/move-in /root/move-in
-COPY conf/gpg-agent.conf /root/.gnupg/gpg-agent.conf
-COPY secrets/* /root/secrets
+COPY conf/tmux.conf /opt/.tmux.conf
+COPY conf/zshrc /opt/.zshrc
+COPY conf/gitconfig /opt/.gitconfig
+COPY conf/gh.yaml /opt/.config/gh/config.yml
+COPY conf/ripgrep /opt/.config/ripgrep/config
+COPY conf/move-in /opt/move-in
+COPY conf/gpg-agent.conf /opt/.gnupg/gpg-agent.conf
+COPY secrets/* /opt/secrets
 COPY bin/* /usr/bin
 
+# Set HOME to /opt and configure for OpenShift compatibility
+ENV HOME=/opt
+
+# Set permissions for OpenShift (arbitrary UID with group 0)
+RUN chown -R 1001:0 /opt && \
+    chmod -R g+rwX /opt && \
+    chmod g=u /etc/passwd
+
 EXPOSE 22
-CMD ["/usr/bin/sshd", "-D"]
+CMD ["/bin/sh", "-c", "echo \"user:x:$(id -u):0::/opt:/bin/zsh\" >> /etc/passwd && /usr/bin/sshd -D"]

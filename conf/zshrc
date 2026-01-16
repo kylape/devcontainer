@@ -82,7 +82,7 @@ cd
 
 git_dirty() {
     for repo in $(find ~/workspace/src -maxdepth 1 -type d -name '[^\.]*'); do
-        if [[ "$repo" != "/root/workspace/src" && -n "$(git -C "$repo" status --porcelain)" ]]; then
+        if [[ "$repo" != "$HOME/workspace/src" && -n "$(git -C "$repo" status --porcelain)" ]]; then
             echo -en "\n💾 $repo"
         fi
     done
