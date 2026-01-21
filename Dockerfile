@@ -39,6 +39,11 @@ RUN ARCH=$(uname -m) && \
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo git-lfs libbpf-devel clang podman-docker tailscale
 
+# Go tool installs - separate layer for better caching (slow under QEMU emulation)
+RUN GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest && \
+    GOROOT=/go GOPATH=/opt/go /go/bin/go install github.com/ankitpokhrel/jira-cli/cmd/jira@v1.6.0 && \
+    GOROOT=/go GOPATH=/opt/go /go/bin/go install sigs.k8s.io/kind@v0.30.0
+
 RUN mkdir -p /opt/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
     echo "AuthorizedKeysFile /opt/.ssh/authorized_keys" >> /etc/ssh/sshd_config && \
@@ -54,12 +59,8 @@ RUN touch /opt/.ssh/authorized_keys && \
     mkdir -p /opt/.config && \
     git -C /opt/.config clone https://github.com/kylape/neovim-config.git nvim && \
     ln -s /opt/.config/nvim/vimrc.vim /opt/.vimrc && \
-    nvim --headless -c 'lua require("lazy").update({wait = true}); vim.cmd("quit")' && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     git clone https://github.com/joshskidmore/zsh-fzf-history-search ~/.oh-my-zsh/plugins/zsh-fzf-history-search && \
-    GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest && \
-    GOROOT=/go GOPATH=/opt/go /go/bin/go install github.com/ankitpokhrel/jira-cli/cmd/jira@v1.6.0 && \
-    GOROOT=/go GOPATH=/opt/go /go/bin/go install sigs.k8s.io/kind@v0.30.0 && \
     mkdir -p /opt/secrets && \
     mkdir -p /opt/.config/gh && mkdir -p /opt/.config/ripgrep && \
     mkdir -p /opt/.gnupg && chmod 700 /opt/.gnupg
