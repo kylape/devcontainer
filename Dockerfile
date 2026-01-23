@@ -59,8 +59,8 @@ RUN touch /opt/.ssh/authorized_keys && \
     mkdir -p /opt/.config && \
     git -C /opt/.config clone https://github.com/kylape/neovim-config.git nvim && \
     ln -s /opt/.config/nvim/vimrc.vim /opt/.vimrc && \
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
-    git clone https://github.com/joshskidmore/zsh-fzf-history-search ~/.oh-my-zsh/plugins/zsh-fzf-history-search && \
+    git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git /opt/.oh-my-zsh && \
+    git clone https://github.com/joshskidmore/zsh-fzf-history-search /opt/.oh-my-zsh/plugins/zsh-fzf-history-search && \
     mkdir -p /opt/secrets && \
     mkdir -p /opt/.config/gh && mkdir -p /opt/.config/ripgrep && \
     mkdir -p /opt/.gnupg && chmod 700 /opt/.gnupg
