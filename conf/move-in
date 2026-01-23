@@ -2,6 +2,13 @@
 
 set -ex
 
+# Create passwd entry for arbitrary UID (OpenShift compatibility)
+if ! whoami &> /dev/null; then
+  if [ -w /etc/passwd ]; then
+    echo "user:x:$(id -u):0::/opt:/bin/zsh" >> /etc/passwd
+  fi
+fi
+
 cd ~
 mc get s3/klape-devcontainer/claude.tar.gz ~/claude.tar.gz
 tar xzf claude.tar.gz
