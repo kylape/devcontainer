@@ -10,6 +10,9 @@ DISABLE_AUTO_TITLE="true"
 
 plugins=(git vi-mode zsh-fzf-history-search)
 
+# Disable insecure directory warning (expected in container with OpenShift arbitrary UIDs)
+ZSH_DISABLE_COMPFIX=true
+
 source $ZSH/oh-my-zsh.sh
 
 export TERMINAL=alacritty
