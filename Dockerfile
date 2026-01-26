@@ -50,7 +50,8 @@ RUN mkdir -p /opt/.ssh && \
     ssh-keygen -A && \
     npm -g install mcp-hub@latest && \
     npm -g install yaml-language-server && \
-    npm install -g @anthropic-ai/claude-code
+    HOME=/opt curl -fsSL https://claude.ai/install.sh | HOME=/opt bash && \
+    ln -s /opt/.claude/bin/claude /usr/local/bin/claude
 
 COPY conf/pam-sshd /etc/pam.d/sshd
 
