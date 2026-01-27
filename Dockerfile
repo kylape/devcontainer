@@ -22,7 +22,7 @@ RUN ARCH=$(uname -m) && \
         ;; \
         *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
     esac && \
-    VIRTCTL_VERSION=$(curl https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt) && \
+    VIRTCTL_VERSION=$(curl -s https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt | tr -d '\n\r') && \
     curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${KUBECTL_ARCH}/kubectl" > /usr/bin/kubectl && \
     curl -L https://github.com/kubevirt/kubevirt/releases/download/${VIRTCTL_VERSION}/virtctl-${VIRTCTL_VERSION}-linux-${VIRTCTL_ARCH} > /usr/bin/virtctl && \
     curl -L https://dl.min.io/client/mc/release/linux-${MC_ARCH}/mc > /usr/bin/mc && \
