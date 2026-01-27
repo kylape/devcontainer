@@ -11,7 +11,7 @@ fi
 
 cd ~
 mc get s3/klape-devcontainer/claude.tar.gz ~/claude.tar.gz
-tar --no-same-owner --no-same-permissions --touch -xzf claude.tar.gz
+tar --no-same-owner --no-same-permissions --touch -xzf claude.tar.gz || true
 rm claude.tar.gz
 
 cd workspace

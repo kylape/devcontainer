@@ -218,7 +218,10 @@ setup_gpg() {
 
         if [ -n "$keygrip" ]; then
             # Preset the passphrase using gpg-preset-passphrase
-            if echo "$gpg_passphrase" | /usr/lib/gnupg/gpg-preset-passphrase --preset "$keygrip" 2>/dev/null; then
+            # Use /usr/libexec path (Fedora) with fallback to /usr/lib/gnupg (Debian/Ubuntu)
+            local preset_bin="/usr/libexec/gpg-preset-passphrase"
+            [ -x "$preset_bin" ] || preset_bin="/usr/lib/gnupg/gpg-preset-passphrase"
+            if echo "$gpg_passphrase" | "$preset_bin" --preset "$keygrip" 2>/dev/null; then
                 log "GPG passphrase cached in agent"
             else
                 log "Warning: Failed to preset GPG passphrase"
