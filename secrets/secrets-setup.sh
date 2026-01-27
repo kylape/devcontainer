@@ -15,6 +15,7 @@ cleanup() {
     # Clean up any temporary variables
     unset MASTER_PASSWORD 2>/dev/null || true
     unset age_key 2>/dev/null || true
+    unset gpg_passphrase 2>/dev/null || true
 }
 
 function log() {
@@ -96,7 +97,15 @@ decrypt_secrets() {
         log "GPG private key extracted"
     fi
 
-    setup_gpg "$gpg_private_key"
+    # Extract GPG passphrase
+    local gpg_passphrase=$(echo "$decrypted_secrets" | yq eval '.gpg.passphrase' 2>/dev/null)
+    if [[ "$gpg_passphrase" != "" && "$gpg_passphrase" != "null" ]]; then
+        log "GPG passphrase extracted"
+    else
+        gpg_passphrase=""
+    fi
+
+    setup_gpg "$gpg_private_key" "$gpg_passphrase"
 
     # Extract AWS credentisl
     local aws_secret_access_key=$(echo "$decrypted_secrets" | yq eval '.aws.secret_access_key' 2>/dev/null)
@@ -184,17 +193,39 @@ setup_gpg() {
         return
     fi
 
-    gpg_private_key="$1"
-    
+    local gpg_private_key="$1"
+    local gpg_passphrase="$2"
+
     # Get key ID from the key file
     local key_id=$(echo "$gpg_private_key" | gpg --show-keys --with-colons - 2>/dev/null | grep '^sec:' | cut -d: -f5 | head -1)
-    
+
     # Check if key is already imported
     if [ -n "$key_id" ] && gpg --list-secret-keys "$key_id" >/dev/null 2>&1; then
         log "GPG key already imported"
     else
         # Import GPG key
         echo "$gpg_private_key" | gpg --batch --import - 2>/dev/null && log "GPG key imported"
+    fi
+
+    # Preset the passphrase in gpg-agent if provided
+    if [ -n "$gpg_passphrase" ]; then
+        # Restart gpg-agent to pick up allow-preset-passphrase config
+        gpgconf --kill gpg-agent
+        gpg-connect-agent /bye >/dev/null 2>&1
+
+        # Get the keygrip for the primary key
+        local keygrip=$(gpg --list-secret-keys --with-keygrip --with-colons 2>/dev/null | grep -A1 '^sec:' | grep '^grp:' | cut -d: -f10 | head -1)
+
+        if [ -n "$keygrip" ]; then
+            # Preset the passphrase using gpg-preset-passphrase
+            if echo "$gpg_passphrase" | /usr/lib/gnupg/gpg-preset-passphrase --preset "$keygrip" 2>/dev/null; then
+                log "GPG passphrase cached in agent"
+            else
+                log "Warning: Failed to preset GPG passphrase"
+            fi
+        else
+            log "Warning: Could not determine GPG keygrip"
+        fi
     fi
 }
 

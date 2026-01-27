@@ -73,6 +73,7 @@ COPY conf/gh.yaml /opt/.config/gh/config.yml
 COPY conf/ripgrep /opt/.config/ripgrep/config
 COPY conf/move-in /opt/move-in
 COPY conf/gpg-agent.conf /opt/.gnupg/gpg-agent.conf
+COPY conf/gpg.conf /opt/.gnupg/gpg.conf
 COPY secrets/* /opt/secrets
 COPY bin/* /usr/bin
 
