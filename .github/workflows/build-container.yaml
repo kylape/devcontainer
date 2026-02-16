@@ -55,8 +55,8 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=gha,scope=amd64
-        cache-to: type=gha,mode=max,scope=amd64
+        cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache-amd64
+        cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache-amd64,mode=max
 
   build-arm64:
     runs-on: devcontainer-runners-arm64
@@ -100,8 +100,8 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=gha,scope=arm64
-        cache-to: type=gha,mode=max,scope=arm64
+        cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache-arm64
+        cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache-arm64,mode=max
 
   create-manifest:
     runs-on: devcontainer-runners-amd64
