@@ -57,6 +57,7 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache-amd64
         cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache-amd64,mode=max
+        outputs: type=image,compression=zstd,compression-level=3
 
   build-arm64:
     runs-on: devcontainer-runners-arm64
@@ -102,6 +103,7 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache-arm64
         cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache-arm64,mode=max
+        outputs: type=image,compression=zstd,compression-level=3
 
   create-manifest:
     runs-on: devcontainer-runners-amd64
