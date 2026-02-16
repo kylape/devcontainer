@@ -42,8 +42,10 @@ RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buil
 # Go tool installs - separate layer for better caching (slow under QEMU emulation)
 RUN GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest && \
     GOROOT=/go GOPATH=/opt/go /go/bin/go install github.com/ankitpokhrel/jira-cli/cmd/jira@v1.6.0 && \
-    GOROOT=/go GOPATH=/opt/go /go/bin/go install sigs.k8s.io/kind@v0.30.0 && \
-    GOROOT=/go GOPATH=/opt/go /go/bin/go install github.com/famasya/gdocs-cli@latest
+    GOROOT=/go GOPATH=/opt/go /go/bin/go install sigs.k8s.io/kind@v0.30.0
+
+# Google API Python libraries for gdocs fetching
+RUN pip install --break-system-packages google-api-python-client google-auth-oauthlib
 
 RUN mkdir -p /opt/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
