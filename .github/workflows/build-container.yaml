@@ -111,6 +111,9 @@ jobs:
       packages: write
 
     steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Log in to Container Registry
       uses: docker/login-action@v3
       with:
@@ -138,8 +141,7 @@ jobs:
         # For each tag, create a manifest combining amd64 and arm64
         for TAG in $TAGS; do
           echo "Creating manifest for $TAG"
-          docker manifest create $TAG \
+          docker buildx imagetools create -t $TAG \
             ${TAG}-amd64 \
             ${TAG}-arm64
-          docker manifest push $TAG
         done
