@@ -139,6 +139,24 @@ decrypt_secrets() {
     mkdir -p ~/.config
     echo "$decrypted_secrets" | yq eval .gcloud.config | base64 -d | zstd -d - | tar -C ~/.config -xf -
 
+    # Extract gdocs-cli credentials
+    local gdocs_credentials=$(echo "$decrypted_secrets" | yq eval '.gdocs.credentials' 2>/dev/null)
+    if [[ "$gdocs_credentials" != "" && "$gdocs_credentials" != "null" ]]; then
+        log "gdocs-cli credentials extracted"
+        mkdir -p ~/.config/gdocs-cli
+        echo "$gdocs_credentials" > ~/.config/gdocs-cli/credentials.json
+        chmod 600 ~/.config/gdocs-cli/credentials.json
+    fi
+
+    # Extract gdocs-cli token (optional - only if already authorized)
+    local gdocs_token=$(echo "$decrypted_secrets" | yq eval '.gdocs.token' 2>/dev/null)
+    if [[ "$gdocs_token" != "" && "$gdocs_token" != "null" ]]; then
+        log "gdocs-cli token extracted"
+        mkdir -p ~/.config/gdocs-cli
+        echo "$gdocs_token" > ~/.config/gdocs-cli/token.json
+        chmod 600 ~/.config/gdocs-cli/token.json
+    fi
+
     local dockerconfig=$(echo "$decrypted_secrets" | yq eval '.dockerconfig' 2>/dev/null)
     if [[ "$dockerconfig" != "" ]]; then
         log "Dockerconfig extracted"
