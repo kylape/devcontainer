@@ -17,7 +17,8 @@ spec:
       serviceAccountName: admin
       containers:
       - image: ghcr.io/kylape/devcontainer:main
-        command: ["sleep", "infinity"]
+        command: ["tini", "--"]
+        args: ["sleep", "infinity"]
         securityContext:
           runAsNonRoot: true
         imagePullPolicy: Always
