@@ -29,7 +29,7 @@ RUN ARCH=$(uname -m) && \
     chmod +x /usr/bin/kubectl /usr/bin/virtctl /usr/bin/mc && \
     dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-${TEKTON_ARCH}.rpm && \
     dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm && \
-    curl https://go.dev/dl/go1.24.4.linux-${GO_ARCH}.tar.gz -L > /go.tar.gz && \
+    curl https://go.dev/dl/go1.26.1.linux-${GO_ARCH}.tar.gz -L > /go.tar.gz && \
     tar xzf /go.tar.gz  && \
     curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-${GCLOUD_ARCH}.tar.gz -L > /gcloud.tar.gz && \
     cd /var && \
