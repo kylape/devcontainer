@@ -120,12 +120,6 @@ decrypt_secrets() {
         echo "export AWS_ACCESS_KEY_ID=$aws_access_key_id"
     fi
 
-    local anthropic_api_key=$(echo "$decrypted_secrets" | yq eval '.anthropic.api_key' 2>/dev/null)
-    if [[ "$anthropic_api_key" != "" ]]; then
-        log "Anthropic API key extracted"
-        echo "export ANTHROPIC_API_KEY=$anthropic_api_key"
-    fi
-
     local github_api_key=$(echo "$decrypted_secrets" | yq eval '.github.api_key' 2>/dev/null)
     if [[ "$github_api_key" != "" ]]; then
         log "GitHub API key extracted"
