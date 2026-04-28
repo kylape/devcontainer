@@ -43,7 +43,7 @@ RUN GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest
     GOROOT=/go GOPATH=/opt/go /go/bin/go install sigs.k8s.io/kind@v0.30.0
 
 # Google API Python libraries for gdocs fetching
-RUN pip install --break-system-packages google-api-python-client google-auth-oauthlib
+RUN pip install --break-system-packages google-api-python-client google-auth-oauthlib pyyaml
 
 RUN mkdir -p /opt/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
