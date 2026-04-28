@@ -3,30 +3,28 @@ FROM quay.io/fedora/fedora-toolbox:43
 RUN ARCH=$(uname -m) && \
     case "${ARCH}" in \
         "x86_64") \
-            KUBECTL_ARCH="amd64" && \
-            VIRTCTL_ARCH="amd64" && \
+            GO_ARCH="amd64" && \
             TEKTON_ARCH="64bit" && \
             SOPS_ARCH="x86_64" && \
-            MC_ARCH="amd64" && \
-            GO_ARCH="amd64" && \
             GCLOUD_ARCH="x86" \
         ;; \
         "aarch64") \
-            KUBECTL_ARCH="arm64" && \
-            VIRTCTL_ARCH="arm64" && \
+            GO_ARCH="arm64" && \
             TEKTON_ARCH="ARM64" && \
             SOPS_ARCH="aarch64" && \
-            MC_ARCH="arm64" && \
-            GO_ARCH="arm64" && \
             GCLOUD_ARCH="arm" \
         ;; \
         *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
     esac && \
     VIRTCTL_VERSION=$(curl -s https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt | tr -cd '[:alnum:].') && \
-    curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${KUBECTL_ARCH}/kubectl" > /usr/bin/kubectl && \
-    curl -L https://github.com/kubevirt/kubevirt/releases/download/${VIRTCTL_VERSION}/virtctl-${VIRTCTL_VERSION}-linux-${VIRTCTL_ARCH} > /usr/bin/virtctl && \
-    curl -L https://dl.min.io/client/mc/release/linux-${MC_ARCH}/mc > /usr/bin/mc && \
-    chmod +x /usr/bin/kubectl /usr/bin/virtctl /usr/bin/mc && \
+    curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${GO_ARCH}/kubectl" > /usr/bin/kubectl && \
+    curl -L https://github.com/kubevirt/kubevirt/releases/download/${VIRTCTL_VERSION}/virtctl-${VIRTCTL_VERSION}-linux-${GO_ARCH} > /usr/bin/virtctl && \
+    curl -L https://dl.min.io/client/mc/release/linux-${GO_ARCH}/mc > /usr/bin/mc && \
+    curl -L https://github.com/int128/kubelogin/releases/download/v1.36.1/kubelogin_linux_${GO_ARCH}.zip -o /tmp/kubelogin.zip && \
+    unzip -j /tmp/kubelogin.zip kubelogin -d /tmp && \
+    mv /tmp/kubelogin /usr/local/bin/kubectl-oidc_login && \
+    rm /tmp/kubelogin.zip && \
+    chmod +x /usr/bin/kubectl /usr/bin/virtctl /usr/bin/mc /usr/local/bin/kubectl-oidc_login && \
     dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-${TEKTON_ARCH}.rpm && \
     dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm && \
     curl https://go.dev/dl/go1.26.1.linux-${GO_ARCH}.tar.gz -L > /go.tar.gz && \
