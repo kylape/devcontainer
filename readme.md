@@ -57,7 +57,13 @@ This devcontainer can run in two modes: standalone Podman or Kubernetes.
 **Recommended for local development with KinD:**
 
 ```bash
-podman run -d --name devcontainer --network host \
+# Create a shared network for devcontainer and KinD clusters
+podman network create dev-net
+
+# Run devcontainer on the shared network
+podman run -d --name devcontainer \
+  --network dev-net \
+  -p 2222:22 \
   -v /home/$USER/devdata:/opt/workspace:Z \
   -v /run/user/$(id -u)/podman/podman.sock:/run/podman/podman.sock:Z \
   --cap-add=SYS_CHROOT \
@@ -66,10 +72,10 @@ podman run -d --name devcontainer --network host \
 
 This provides:
 * Podman access via the mounted socket — create/manage containers on the host
-* KinD clusters reachable at `127.0.0.1` — no kubeconfig editing needed
-* Direct access to host services (registries, etc.)
+* Shared network with KinD clusters — containers can communicate directly
+* SSH access on host port 2222
 
-Access the container via `podman exec -it devcontainer zsh`.
+Access the container via `podman exec -it devcontainer zsh` or `ssh -p 2222 localhost`.
 
 **Host setup for rootless podman + KinD:**
 
@@ -85,11 +91,17 @@ log_driver = "k8s-file"
 EOF
 ```
 
-**Creating KinD clusters** (from inside the devcontainer):
+**Creating KinD clusters** (from host or inside devcontainer):
 
 ```bash
 export KIND_EXPERIMENTAL_PROVIDER=podman
-kind create cluster
+kind create cluster --name dev
+
+# Connect KinD control plane to the shared network
+podman network connect dev-net dev-control-plane
+
+# The cluster is now accessible from devcontainer via container name
+# e.g., kubectl will work using the kubeconfig that references the container IP
 ```
 
 **Minimal deployment** (no host integration):
