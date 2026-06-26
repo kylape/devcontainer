@@ -47,3 +47,69 @@ Of course the obvious downsides are:
 
 * Sensitive data are in the cloud as opposed to on a physical machine in close proximity to the user
 * While inentionality is great, overlooked security gaps have a greater impact on devcontainers than local development
+
+## Deployment
+
+This devcontainer can run in two modes: standalone Podman or Kubernetes.
+
+### Podman (Standalone)
+
+**Recommended for local development with KinD:**
+
+```bash
+podman run -d --name devcontainer --network host \
+  -v /home/$USER/devdata:/opt/workspace:Z \
+  -v /run/user/$(id -u)/podman/podman.sock:/run/podman/podman.sock:Z \
+  --cap-add=SYS_CHROOT \
+  ghcr.io/kylape/devcontainer:latest
+```
+
+This provides:
+* Podman access via the mounted socket — create/manage containers on the host
+* KinD clusters reachable at `127.0.0.1` — no kubeconfig editing needed
+* Direct access to host services (registries, etc.)
+
+Access the container via `podman exec -it devcontainer zsh`.
+
+**Host setup for rootless podman + KinD:**
+
+```bash
+# Enable the podman socket
+systemctl --user enable --now podman.socket
+
+# Configure log driver to avoid KinD timeout issues
+mkdir -p ~/.config/containers
+cat >> ~/.config/containers/containers.conf <<EOF
+[containers]
+log_driver = "k8s-file"
+EOF
+```
+
+**Creating KinD clusters** (from inside the devcontainer):
+
+```bash
+export KIND_EXPERIMENTAL_PROVIDER=podman
+kind create cluster
+```
+
+**Minimal deployment** (no host integration):
+
+```bash
+podman run -d --name devcontainer -p 2222:22 \
+  -v /home/$USER/devdata:/opt/workspace:Z \
+  --cap-add=SYS_CHROOT \
+  ghcr.io/kylape/devcontainer:latest
+```
+
+### Kubernetes (KinD or OpenShift)
+
+Deploy using the manifests in `resources/`:
+
+```bash
+kubectl create -f resources/
+kubectl wait --for=condition=Available --timeout=5m deploy/devcontainer
+```
+
+For OpenShift, use `resources/openshift/` instead.
+
+See `CLAUDE.md` for additional build and deployment commands.
