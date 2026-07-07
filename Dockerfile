@@ -77,7 +77,6 @@ COPY conf/move-in /opt/move-in
 COPY conf/gpg-agent.conf /opt/.gnupg/gpg-agent.conf
 COPY conf/gpg.conf /opt/.gnupg/gpg.conf
 COPY secrets/* /opt/secrets
-COPY bin/* /usr/bin
 
 # Set HOME to /opt and configure for OpenShift compatibility
 ENV HOME=/opt
