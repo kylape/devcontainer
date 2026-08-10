@@ -35,7 +35,7 @@ RUN ARCH=$(uname -m) && \
     rm /gcloud.tar.gz /go.tar.gz
 
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
-RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo git-lfs libbpf-devel clang podman-docker tailscale tini python3-pyyaml envsubst
+RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo git-lfs libbpf-devel clang podman-docker tailscale tini python3-pyyaml envsubst openldap-devel python3-devel
 
 # Go tool installs - separate layer for better caching (slow under QEMU emulation)
 RUN GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest && \
@@ -44,7 +44,7 @@ RUN GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest
 
 # Google API Python libraries for gdocs fetching
 # Pyright for code intelligence
-RUN pip install --break-system-packages google-api-python-client google-auth-oauthlib pyright
+RUN pip install --break-system-packages google-api-python-client google-auth-oauthlib pyright python-ldap
 
 RUN mkdir -p /opt/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
