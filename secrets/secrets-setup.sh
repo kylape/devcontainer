@@ -132,7 +132,7 @@ decrypt_secrets() {
     echo "$decrypted_secrets" | yq eval .huggingface.env | sed -e 's/: /=/' -e 's/^/export /'
 
     mkdir -p ~/.config
-    echo "$decrypted_secrets" | yq eval .gcloud.config | base64 -d | zstd -d - | tar -C ~/.config -xf -
+    echo "$decrypted_secrets" | yq eval .gcloud.config | base64 -d | zstd -d - > ~/.config/agent.json
 
     # Extract gdocs-cli credentials
     local gdocs_credentials=$(echo "$decrypted_secrets" | yq eval '.gdocs.credentials' 2>/dev/null)
