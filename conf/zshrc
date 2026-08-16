@@ -87,15 +87,21 @@ mkdir -p ~/workspace
 cd
 
 git_dirty() {
-    for repo in $(find ~/workspace/src -maxdepth 1 -type d -name '[^\.]*'); do
-        if [[ "$repo" != "$HOME/workspace/src" && -n "$(git -C "$repo" status --porcelain)" ]]; then
-            echo -en "\n💾 $repo"
+    # Only report actual git repo roots (dirs containing their own .git).
+    # The org-grouping folders under src/ (inference, rhai, ...) are not repos,
+    # so a bare `git -C` there walks up to ~/workspace/.git and falsely reports
+    # every one of them dirty whenever the workspace repo has any change.
+    local gitdir repo
+    for gitdir in $(find ~/workspace/src -maxdepth 3 -type d -name .git -prune 2>/dev/null); do
+        repo="${gitdir%/.git}"
+        if [[ -n "$(git -C "$repo" status --porcelain 2>/dev/null)" ]]; then
+            echo -en "\n💾 ${repo#$HOME/workspace/}"
         fi
     done
-    repos=("zettelkasten" "scratchpad" "")
-    for repo in "${repos[@]}"; do
-        if [[ -n "$(git -C ~/workspace/$repo status --porcelain)" ]]; then
-            echo -en "\n💾 $repo"
+    local rel
+    for rel in "zettelkasten" "scratchpad" ""; do
+        if [[ -d ~/workspace/$rel/.git && -n "$(git -C ~/workspace/$rel status --porcelain 2>/dev/null)" ]]; then
+            echo -en "\n💾 ${rel:-workspace}"
         fi
     done
 }
