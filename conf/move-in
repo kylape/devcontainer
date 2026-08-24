@@ -9,11 +9,14 @@ if ! whoami &> /dev/null; then
   fi
 fi
 
-cd ~
-mc get s3/klape-devcontainer/claude.tar.gz ~/claude.tar.gz
-tar --no-same-owner --no-same-permissions --touch -xzf claude.tar.gz || true
-rm claude.tar.gz
-
-cd workspace
+cd ~/workspace
 gh repo clone workspace .
+
+# Restore Claude Code transcripts from S3 (replaces the old claude.tar.gz blob).
+# pull-all aggregates every container's sessions, dedups by session id, and
+# builds the FTS search index. --dest lands them in ~/.claude/projects so they
+# are resumable (/resume), not just searchable.
+mkdir -p ~/.claude/projects
+python3 ./bin/pull-all-conversations.py --dest ~/.claude/projects || true
+
 ./move-in
