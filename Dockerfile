@@ -49,7 +49,8 @@ RUN cargo install --git https://github.com/wseaton/ujira ujira && \
 
 # Google API Python libraries for gdocs fetching
 # Pyright for code intelligence
-RUN pip install --break-system-packages google-api-python-client google-auth-oauthlib pyright python-ldap
+# httpx + mcp: run the Slack MCP server directly (no container); see bin/run-slack-mcp.sh
+RUN pip install --break-system-packages google-api-python-client google-auth-oauthlib pyright python-ldap httpx==0.28.1 mcp==1.27.0
 
 RUN mkdir -p /opt/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
