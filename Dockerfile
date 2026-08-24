@@ -42,10 +42,10 @@ RUN GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest
     GOROOT=/go GOPATH=/opt/go /go/bin/go install github.com/ankitpokhrel/jira-cli/cmd/jira@v1.6.0 && \
     GOROOT=/go GOPATH=/opt/go /go/bin/go install sigs.k8s.io/kind@v0.30.0
 
-# Rust tool installs - jira-mcp
-RUN cargo install --git https://github.com/wseaton/jira-mcp jira-mcp && \
-    cp /root/.cargo/bin/jira-mcp /usr/local/bin/jira-mcp && \
-    chmod +x /usr/local/bin/jira-mcp
+# Rust tool installs - ujira
+RUN cargo install --git https://github.com/wseaton/ujira ujira && \
+    cp /root/.cargo/bin/ujira /usr/local/bin/ujira && \
+    chmod +x /usr/local/bin/ujira
 
 # Google API Python libraries for gdocs fetching
 # Pyright for code intelligence
