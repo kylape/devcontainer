@@ -57,8 +57,10 @@ RUN mkdir -p /opt/.ssh && \
     ssh-keygen -A && \
     npm -g install mcp-hub@latest && \
     npm -g install yaml-language-server && \
-    HOME=/opt curl -fsSL https://claude.ai/install.sh | HOME=/opt bash && \
-    ln -s /opt/.claude/bin/claude /usr/local/bin/claude
+    HOME=/opt curl -fsSL https://claude.ai/install.sh         | HOME=/opt bash && \
+    HOME=/opt curl -fsSL https://chatgpt.com/codex/install.sh | HOME=/opt sh && \
+    ln -s /opt/.claude/bin/claude                               /usr/local/bin/claude && \
+    ln -s /opt/.codex/packages/standlaone/current/bin/codex     /usr/local/bin/codex && \
 
 COPY conf/pam-sshd /etc/pam.d/sshd
 
