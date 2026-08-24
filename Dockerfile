@@ -59,8 +59,10 @@ RUN mkdir -p /opt/.ssh && \
     npm -g install yaml-language-server && \
     HOME=/opt curl -fsSL https://claude.ai/install.sh         | HOME=/opt bash && \
     HOME=/opt curl -fsSL https://chatgpt.com/codex/install.sh | HOME=/opt sh && \
+    HOME=/opt curl -fsSL https://opencode.ai/install          | HOME=/opt bash && \
     ln -s /opt/.claude/bin/claude                               /usr/local/bin/claude && \
     ln -s /opt/.codex/packages/standlaone/current/bin/codex     /usr/local/bin/codex && \
+    ln -s /opt/.opencode/bin/opencode                           /usr/local/bin/opencode
 
 COPY conf/pam-sshd /etc/pam.d/sshd
 
