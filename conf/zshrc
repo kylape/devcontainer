@@ -16,7 +16,14 @@ ZSH_DISABLE_COMPFIX=true
 source $ZSH/oh-my-zsh.sh
 
 export TERMINAL=alacritty
-export TERM=xterm-256color
+# Advertise truecolor. Neither the ssh jump host nor `podman exec` forwards
+# COLORTERM from the Mac, so set it here for apps that gate 24-bit color on it.
+export COLORTERM=truecolor
+# Only force TERM outside tmux. Inside tmux, keep tmux's own tmux-256color so
+# truecolor/italics detection works; overwriting it with xterm-256color breaks it.
+if [[ -z "$TMUX" ]]; then
+    export TERM=xterm-256color
+fi
 set -o vi
 
 alias ll="ls -l --color=auto"
