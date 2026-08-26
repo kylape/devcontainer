@@ -126,6 +126,16 @@ decrypt_secrets() {
         echo "export GH_TOKEN=$github_api_key"
     fi
 
+    # Authenticate Codex without exporting the API key into the shell
+    # environment. The key is expected at .openai.api_key in the decrypted
+    # secrets document; update that path if the secret is stored elsewhere.
+    local openai_api_key=$(echo "$decrypted_secrets" | yq eval '.openai.api_key' 2>/dev/null)
+    if [[ -n "$openai_api_key" && "$openai_api_key" != "null" ]] &&
+       ! codex login status >/dev/null 2>&1; then
+        printf '%s' "$openai_api_key" | codex login --with-api-key >/dev/null
+    fi
+    unset openai_api_key
+
     echo "$decrypted_secrets" | yq eval .jira.env | sed -e 's/: /=/' -e 's/^/export /'
     echo "$decrypted_secrets" | yq eval .gcloud.env | sed -e 's/: /=/' -e 's/^/export /'
     echo "$decrypted_secrets" | yq eval .redhat.env | sed -e 's/: /=/' -e 's/^/export /'
