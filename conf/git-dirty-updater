@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# Keep the prompt free of git operations.  This process periodically scans the
+# workspace and atomically replaces a cache containing the rendered prompt
+# fragment.
+
+set -u
+
+workspace=${WORKSPACE_ROOT:-$HOME/workspace}
+cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/devcontainer
+cache_file=$cache_dir/git-dirty
+lock_file=$cache_dir/git-dirty.lock
+interval=${GIT_DIRTY_INTERVAL:-5}
+
+mkdir -p "$cache_dir" || exit 1
+
+# Every zsh session may try to start the updater.  Keep exactly one scanner by
+# holding this descriptor for the lifetime of the process.
+exec 9>"$lock_file" || exit 1
+flock -n 9 || exit 0
+
+tmp_file=
+cleanup_tmp() {
+    [ -z "$tmp_file" ] || rm -f "$tmp_file"
+}
+stop() {
+    cleanup_tmp
+    exit 0
+}
+trap cleanup_tmp EXIT
+trap stop INT TERM HUP
+
+is_dirty() {
+    git -C "$1" status --porcelain 2>/dev/null | grep -q .
+}
+
+write_cache() {
+    tmp_file="$cache_file.$$"
+    : > "$tmp_file" || return 1
+
+    if [ -d "$workspace/src" ]; then
+        find "$workspace/src" -maxdepth 3 -type d -name .git -prune -print 2>/dev/null |
+            while IFS= read -r gitdir; do
+                repo=${gitdir%/.git}
+                if is_dirty "$repo"; then
+                    relative=${repo#"$workspace"/}
+                    printf '\n💾 %s' "$relative" >> "$tmp_file"
+                fi
+            done
+    fi
+
+    for relative in zettelkasten scratchpad ''; do
+        repo=$workspace/$relative
+        if [ -d "$repo/.git" ] && is_dirty "$repo"; then
+            printf '\n💾 %s' "${relative:-workspace}" >> "$tmp_file"
+        fi
+    done
+
+    mv -f "$tmp_file" "$cache_file"
+    tmp_file=
+}
+
+while :; do
+    write_cache
+    sleep "$interval"
+done

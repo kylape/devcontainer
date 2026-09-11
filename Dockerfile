@@ -80,6 +80,7 @@ RUN touch /opt/.ssh/authorized_keys && \
 
 COPY conf/tmux.conf /opt/.tmux.conf
 COPY conf/zshrc /opt/.zshrc
+COPY conf/git-dirty-updater /opt/git-dirty-updater
 COPY conf/gitconfig /opt/.gitconfig
 COPY conf/gh.yaml /opt/.config/gh/config.yml
 COPY conf/ripgrep /opt/.config/ripgrep/config
