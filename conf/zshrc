@@ -98,7 +98,7 @@ git_dirty() {
     [[ -r "$cache" ]] && cat "$cache"
 }
 
-"$HOME/git-dirty-updater" >/dev/null 2>&1 &!
+git-dirty-updater >/dev/null 2>&1 &!
 PROMPT='✨ devcontainer ✨ $(git_dirty)'" $PROMPT"
 
 # The next line updates PATH for the Google Cloud SDK.
