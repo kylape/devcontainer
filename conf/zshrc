@@ -69,14 +69,11 @@ fi
 eval $(~/secrets/secrets-setup.sh)
 
 
-# Check if the s3 config is still has the stock placeholder settings
-if [[ -n "$(mc alias ls s3 | grep YOUR-ACCESS-KEY-HERE)" ]]; then
-    echo Setting up mc alias for s3...
-    mc alias set s3 https://s3.us-east-1.amazonaws.com "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY"
-fi
-
+# AWS CLI uses the credentials exported by secrets-setup.sh and honors
+# AWS_ENDPOINT_URL_S3 for SeaweedFS or another S3-compatible endpoint.
 if [[ ! -f "$HOME/.zsh_history" ]]; then
-    mc get s3/klape-devcontainer/zsh_history ~/.zsh_history
+    aws s3 cp s3://klape-devcontainer/zsh_history "$HOME/.zsh_history" \
+        --region "${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}" --only-show-errors
 fi
 
 setopt SHARE_HISTORY          # Share history between sessions
