@@ -19,12 +19,11 @@ RUN ARCH=$(uname -m) && \
     VIRTCTL_VERSION=$(curl -s https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt | tr -cd '[:alnum:].') && \
     curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${GO_ARCH}/kubectl" > /usr/bin/kubectl && \
     curl -L https://github.com/kubevirt/kubevirt/releases/download/${VIRTCTL_VERSION}/virtctl-${VIRTCTL_VERSION}-linux-${GO_ARCH} > /usr/bin/virtctl && \
-    curl -L https://dl.min.io/client/mc/release/linux-${GO_ARCH}/mc > /usr/bin/mc && \
     curl -L https://github.com/int128/kubelogin/releases/download/v1.36.1/kubelogin_linux_${GO_ARCH}.zip -o /tmp/kubelogin.zip && \
     unzip -j /tmp/kubelogin.zip kubelogin -d /tmp && \
     mv /tmp/kubelogin /usr/local/bin/kubectl-oidc_login && \
     rm /tmp/kubelogin.zip && \
-    chmod +x /usr/bin/kubectl /usr/bin/virtctl /usr/bin/mc /usr/local/bin/kubectl-oidc_login && \
+    chmod +x /usr/bin/kubectl /usr/bin/virtctl /usr/local/bin/kubectl-oidc_login && \
     dnf install -y https://github.com/tektoncd/cli/releases/download/v0.41.0/tektoncd-cli-0.41.0_Linux-${TEKTON_ARCH}.rpm && \
     dnf install -y https://github.com/getsops/sops/releases/download/v3.10.2/sops-3.10.2-1.${SOPS_ARCH}.rpm && \
     curl https://go.dev/dl/go1.26.1.linux-${GO_ARCH}.tar.gz -L > /go.tar.gz && \
@@ -35,7 +34,7 @@ RUN ARCH=$(uname -m) && \
     rm /gcloud.tar.gz /go.tar.gz
 
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
-RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo git-lfs libbpf-devel clang podman-docker tailscale tini python3-pyyaml envsubst openldap-devel python3-devel python3-uv
+RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo git-lfs libbpf-devel clang podman-docker tailscale tini python3-pyyaml envsubst openldap-devel python3-devel python3-uv awscli2
 
 # Go tool installs - separate layer for better caching (slow under QEMU emulation)
 RUN GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest && \
