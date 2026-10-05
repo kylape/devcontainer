@@ -10,7 +10,7 @@ Key characteristics:
 - Container-based development environment running in Kubernetes
 - SSH server for remote access (including from tablets)
 - SOPS/age for encrypted secret management
-- MinIO/S3 for development cache storage
+- S3-compatible development cache storage accessed with AWS CLI
 - Ephemeral by design - can be spun up fresh daily
 
 ## Development Commands
