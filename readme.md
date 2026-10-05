@@ -20,9 +20,22 @@ Given the above requirements, here's what this project looks like:
 
 * Container image based off of [Stackrox builder image](https://github.com/kylape/stackrox-tekton/blob/main/Dockerfile)
 * SSH running in-container.  `kubectl exec` does not work easily on tablets.
-* S3/MinIO as a cache
+* S3-compatible storage accessed with AWS CLI for development caches
 * SOPS/age for managing secrets
 * Ability to utilize k8s service account token for issuing `kubectl` commands out-of-the-box
+
+### S3 access
+
+The image includes AWS CLI (`aws`). Shell startup uses the credentials exported
+by `secrets-setup.sh` to restore `s3://klape-devcontainer/zsh_history` when
+`~/.zsh_history` is missing. The region defaults to `us-east-1`; override it with
+`AWS_REGION` or `AWS_DEFAULT_REGION`.
+
+To use SeaweedFS or another S3-compatible service, set `AWS_ENDPOINT_URL_S3` in
+the container environment to its S3 endpoint (for example,
+`http://seaweedfs:8333`). Without an endpoint override, AWS CLI uses Amazon S3.
+Use the service's credentials in `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+The bucket and history object must already exist at the selected endpoint.
 
 ## Why?
 
