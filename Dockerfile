@@ -36,11 +36,6 @@ RUN ARCH=$(uname -m) && \
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 RUN dnf install -y neovim sshd tmux zsh yq tig rbw htop age pinentry gh fzf buildah patch make gcc podman npm nodejs jq npm nodejs zstd skopeo rust-analyzer python-pip helm binutils-gold cargo git-lfs libbpf-devel clang podman-docker tailscale tini python3-pyyaml envsubst openldap-devel python3-devel python3-uv awscli2
 
-# Herdr - install the stable release for the container architecture
-RUN curl -fsSL https://herdr.dev/install.sh -o /tmp/install-herdr.sh && \
-    HERDR_INSTALL_DIR=/usr/local/bin sh /tmp/install-herdr.sh && \
-    rm /tmp/install-herdr.sh
-
 # Go tool installs - separate layer for better caching (slow under QEMU emulation)
 RUN GOROOT=/go GOPATH=/opt/go /go/bin/go install golang.org/x/tools/gopls@latest && \
     GOROOT=/go GOPATH=/opt/go /go/bin/go install github.com/ankitpokhrel/jira-cli/cmd/jira@v1.6.0 && \
@@ -65,6 +60,7 @@ RUN mkdir -p /opt/.ssh && \
     HOME=/opt curl -fsSL https://claude.ai/install.sh         | HOME=/opt bash && \
     HOME=/opt curl -fsSL https://chatgpt.com/codex/install.sh | HOME=/opt sh && \
     HOME=/opt curl -fsSL https://opencode.ai/install          | HOME=/opt bash && \
+    HOME=/opt curl -fsSL https://herdr.dev/install.sh         | HERDR_INSTALL_DIR=/usr/local/bin sh && \
     ln -s /opt/.claude/bin/claude                               /usr/local/bin/claude && \
     ln -s /opt/.codex/packages/standlaone/current/bin/codex     /usr/local/bin/codex && \
     ln -s /opt/.opencode/bin/opencode                           /usr/local/bin/opencode
