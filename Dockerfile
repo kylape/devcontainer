@@ -65,7 +65,7 @@ RUN mkdir -p /opt/.ssh && \
     HOME=/opt curl -fsSL https://opencode.ai/install          | HOME=/opt bash && \
     HOME=/opt curl -fsSL https://herdr.dev/install.sh         | HERDR_INSTALL_DIR=/usr/local/bin sh && \
     ln -s /opt/.claude/bin/claude                               /usr/local/bin/claude && \
-    ln -s /opt/.codex/packages/standlaone/current/bin/codex     /usr/local/bin/codex && \
+    ln -s /opt/.codex/packages/standalone/current/bin/codex     /usr/local/bin/codex && \
     ln -s /opt/.opencode/bin/opencode                           /usr/local/bin/opencode
 
 COPY conf/pam-sshd /etc/pam.d/sshd
