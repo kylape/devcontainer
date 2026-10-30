@@ -55,6 +55,9 @@ RUN mkdir -p /opt/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
     echo "AuthorizedKeysFile /opt/.ssh/authorized_keys" >> /etc/ssh/sshd_config && \
     ssh-keygen -A && \
+    chgrp 0 /etc/ssh/sshd_config /etc/ssh/ssh_host_*_key* && \
+    chmod g+r /etc/ssh/sshd_config /etc/ssh/ssh_host_*_key* && \
+    chmod g+rx /etc/ssh && \
     npm -g install mcp-hub@latest && \
     npm -g install yaml-language-server && \
     HOME=/opt curl -fsSL https://claude.ai/install.sh         | HOME=/opt bash && \
