@@ -44,7 +44,7 @@ export GOROOT=/go
 export GOPATH=~/workspace/go
 export GOCACHE=~/workspace/.cache/go-build
 export GOMODCACHE=~/workspace/go/pkg/mod
-export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+export PATH=$GOROOT/bin:$GOPATH/bin:/opt/go/bin:$PATH
 
 export GPG_TTY=$(tty)
 export CONTAINER_HOST=unix:///run/podman/podman.sock
